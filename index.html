@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบบริหารจัดการโครงการ - ภาควิชาเทคโนโลยีและสื่อสารการศึกษา มมส.</title>
+    <!-- Google Fonts: Prompt -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        msu: {
+                            gold: '#EAB308',
+                            goldDark: '#CA8A04',
+                            navy: '#1E3A8A',
+                            navyDark: '#0F172A',
+                            gray: '#F8FAFC'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Prompt', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Prompt', sans-serif; background-color: #F8FAFC; }
+        .glass-header {
+            background: rgba(30, 58, 138, 0.95);
+            backdrop-filter: blur(10px);
+        }
+    </style>
+</head>
+<body class="text-slate-800 flex flex-col min-h-screen">
+
+    <!-- Header Navigation -->
+    <header class="glass-header text-white sticky top-0 z-50 shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-wrap justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-full bg-msu-gold flex items-center justify-center font-bold text-msu-navy text-xl shadow">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg leading-tight">ภาควิชาเทคโนโลยีและสื่อสารการศึกษา</h1>
+                    <p class="text-xs text-yellow-300">คณะศึกษาศาสตร์ มหาวิทยาลัยมหาสารคาม</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-3 mt-2 sm:mt-0">
+                <button id="viewToggleBtn" onclick="toggleRoleView()" class="px-3 py-1.5 rounded-lg text-xs font-medium bg-white/10 hover:bg-white/20 transition flex items-center gap-2">
+                    <i class="fa-solid fa-eye"></i> <span id="viewModeText">มุมมอง: ผู้เข้าชมทั่วไป</span>
+                </button>
+                <button id="loginLogoutBtn" onclick="handleAuthAction()" class="px-4 py-1.5 rounded-lg text-xs font-semibold bg-msu-gold text-msu-navyDark hover:bg-yellow-400 shadow transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-right-to-bracket"></i> <span id="authBtnText">เข้าสู่ระบบ Admin</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full">
+        
+        <!-- Top Stats Cards -->
+        <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200/80 flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-medium text-slate-500">โครงการทั้งหมด</p>
+                    <h3 id="statTotalProjects" class="text-2xl font-bold text-slate-800 mt-1">0</h3>
+                </div>
+                <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center text-xl">
+                    <i class="fa-solid fa-folder-open"></i>
+                </div>
+            </div>
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200/80 flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-medium text-slate-500">งบประมาณอนุมัติรวม</p>
+                    <h3 id="statTotalBudget" class="text-2xl font-bold text-emerald-600 mt-1">฿0</h3>
+                </div>
+                <div class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center text-xl">
+                    <i class="fa-solid fa-wallet"></i>
+                </div>
+            </div>
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200/80 flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-medium text-slate-500">เบิกจ่ายแล้ว</p>
+                    <h3 id="statTotalDisbursed" class="text-2xl font-bold text-amber-600 mt-1">฿0</h3>
+                </div>
+                <div class="w-12 h-12 bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center text-xl">
+                    <i class="fa-solid fa-receipt"></i>
+                </div>
+            </div>
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200/80 flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-medium text-slate-500">คงเหลือ</p>
+                    <h3 id="statTotalRemaining" class="text-2xl font-bold text-indigo-600 mt-1">฿0</h3>
+                </div>
+                <div class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center text-xl">
+                    <i class="fa-solid fa-piggy-bank"></i>
+                </div>
+            </div>
+        </section>
+
+        <!-- Filters & Search Bar -->
+        <section class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200/80 mb-6">
+            <div class="flex flex-col lg:flex-row gap-4 justify-between items-center">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full lg:w-3/4">
+                    <!-- Search Input -->
+                    <div class="relative">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-slate-400 text-sm"></i>
+                        <input type="text" id="searchInput" oninput="applyFilters()" placeholder="ค้นหาชื่อโครงการ/ผู้รับผิดชอบ..." class="w-full pl-9 pr-3 py-2 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-msu-navy">
+                    </div>
+                    <!-- Filter Fiscal Year -->
+                    <div>
+                        <select id="filterYear" onchange="applyFilters()" class="w-full py-2 px-3 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-msu-navy">
+                            <option value="">-- ทุกปีงบประมาณ --</option>
+                        </select>
+                    </div>
+                    <!-- Filter Category -->
+                    <div>
+                        <select id="filterCategory" onchange="applyFilters()" class="w-full py-2 px-3 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-msu-navy">
+                            <option value="">-- ทุกประเภทโครงการ --</option>
+                            <option value="บริการวิชาการ">บริการวิชาการ</option>
+                            <option value="วิจัยและนวัตกรรม">วิจัยและนวัตกรรม</option>
+                            <option value="ทำนุบำรุงศิลปวัฒนธรรม">ทำนุบำรุงศิลปวัฒนธรรม</option>
+                            <option value="พัฒนาการเรียนการสอน">พัฒนาการเรียนการสอน</option>
+                            <option value="กิจการนิสิต">กิจการนิสิต</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Admin Add Project Button -->
+                <div id="adminActionGroup" class="w-full lg:w-auto hidden flex justify-end">
+                    <button onclick="openProjectModal()" class="w-full sm:w-auto px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-sm rounded-xl shadow transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-plus"></i> เพิ่มโครงการใหม่
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Projects Table / Grid -->
+        <section class="bg-white rounded-2xl shadow-sm border border-slate-200/80 overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-100 text-slate-700 text-xs font-semibold uppercase tracking-wider border-b border-slate-200">
+                            <th class="py-3.5 px-4">รหัส / ชื่อโครงการ</th>
+                            <th class="py-3.5 px-4">ผู้รับผิดชอบ / ปีงบฯ</th>
+                            <th class="py-3.5 px-4">ประเภท / SDG</th>
+                            <th class="py-3.5 px-4 text-right">งบอนุมัติ (บาท)</th>
+                            <th class="py-3.5 px-4 text-right">เบิกจ่ายแล้ว (บาท)</th>
+                            <th class="py-3.5 px-4 text-center">เอกสาร</th>
+                            <th class="py-3.5 px-4 text-center">จัดการ</th>
+                        </tr>
+                    </thead>
+                    <tbody id="projectsTableBody" class="divide-y divide-slate-100 text-sm">
+                        <!-- Dynamic Loading or Data -->
+                        <tr>
+                            <td colspan="7" class="text-center py-8 text-slate-400">
+                                <i class="fa-solid fa-spinner fa-spin text-2xl mb-2"></i>
+                                <p>กำลังโหลดข้อมูลโครงการ...</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-msu-navyDark text-slate-400 py-6 border-t border-slate-800 text-xs text-center">
+        <p>© 2026 ภาควิชาเทคโนโลยีและสื่อสารการศึกษา คณะศึกษาศาสตร์ มหาวิทยาลัยมหาสารคาม</p>
+        <p class="mt-1 text-slate-500">Project & Activity Management System (Powered by Google Apps Script & Sheets)</p>
+    </footer>
+
+    <!-- Modal: Login -->
+    <div id="loginModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white w-full max-w-md rounded-2xl shadow-xl overflow-hidden p-6 relative animate-fade-in">
+            <button onclick="closeModal('loginModal')" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+            <div class="text-center mb-6">
+                <div class="w-12 h-12 bg-msu-navy text-msu-gold rounded-full flex items-center justify-center mx-auto mb-3 text-xl shadow">
+                    <i class="fa-solid fa-lock"></i>
+                </div>
+                <h3 class="text-lg font-bold text-slate-800">เข้าสู่ระบบผู้ดูแลระบบ (Admin)</h3>
+                <p class="text-xs text-slate-500">กรุณากรอก Username และ Password เพื่อจัดการข้อมูล</p>
+            </div>
+            <form id="loginForm" onsubmit="submitLogin(event)">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Username</label>
+                        <input type="text" id="loginUsername" required class="w-full px-3 py-2 text-sm border border-slate-300 rounded-xl focus:ring-2 focus:ring-msu-navy focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Password</label>
+                        <input type="password" id="loginPassword" required class="w-full px-3 py-2 text-sm border border-slate-300 rounded-xl focus:ring-2 focus:ring-msu-navy focus:outline-none">
+                    </div>
+                    <button type="submit" class="w-full py-2.5 bg-msu-navy hover:bg-blue-900 text-white font-semibold text-sm rounded-xl shadow transition">
+                        เข้าสู่ระบบ
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Add / Edit Project -->
+    <div id="projectModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4 overflow-y-auto">
+        <div class="bg-white w-full max-w-3xl rounded-2xl shadow-xl overflow-hidden p-6 relative my-8">
+            <button onclick="closeModal('projectModal')" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+            <h3 id="modalTitle" class="text-lg font-bold text-slate-800 mb-4 border-b pb-2">เพิ่มโครงการใหม่</h3>
+            
+            <form id="projectForm" onsubmit="submitProjectForm(event)" class="space-y-4">
+                <input type="hidden" id="p_id">
+                
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">รหัสโครงการ *</label>
+                        <input type="text" id="p_code" required class="w-full px-3 py-2 text-sm border border-slate-300 rounded-xl">
+                    </div>
+                    <div class="sm:col-span-2">
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">ชื่อโครงการ *</label>
+                        <input type="text" id="p_title" required class="w-full px-3 py-2 text-sm border border-slate-300 rounded-xl">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">ผู้รับผิดชอบ *</label>
+                        <input type="text" id="p_owner" required class="w-full px-3 py-2 text-sm border border-slate-300 rounded-xl">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">ปีงบประมาณ (พ.ศ.) *</label>
+                        <input type="number" id="p_fiscalYear" required placeholder="เช่น 2569" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-xl">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">ประเภทโครงการ *</label>
+                        <select id="p_category" required class="w-full px-3 py-2 text-sm border border-slate-300 rounded-xl">
+                            <option value="บริการวิชาการ">บริการวิชาการ</option>
+                            <option value="วิจัยและนวัตกรรม">วิจัยและนวัตกรรม</option>
+                            <option value="ทำนุบำรุงศิลปวัฒนธรรม">ทำนุบำรุงศิลปวัฒนธรรม</option>
+                            <option value="พัฒนาการเรียนการสอน">พัฒนาการเรียนการสอน</option>
+                            <option value="กิจการนิสิต">กิจการนิสิต</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">งบประมาณเสนอตั้ง (บาท)</label>
+                        <input type="number" id="p_budget" min="0" step="0.01" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-xl">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">งบประมาณอนุมัติ (บาท) *</label>
+                        <input type="number" id="p_approvedBudget" required min="0" step="0.01" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-xl">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">เบิกจ่ายแล้ว (บาท)</label>
+                        <input type="number" id="p_disbursedAmount" min="0" step="0.01" value="0" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-xl">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">วันเริ่มต้น</label>
+                        <input type="date" id="p_startDate" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-xl">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">วันสิ้นสุด</label>
+                        <input type="date" id="p_endDate" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-xl">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">สอดคล้องกับ SDG (SO)</label>
+                        <input type="text" id="p_sdg" placeholder="เช่น SDG 4: Quality Education" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-xl">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">ลิงก์ Google Drive เอกสารโครงการ</label>
+                        <input type="url" id="p_driveLink" placeholder="https://drive.google.com/..." class="w-full px-3 py-2 text-sm border border-slate-300 rounded-xl">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">วัตถุประสงค์โครงการ</label>
+                    <textarea id="p_objective" rows="2" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-xl"></textarea>
+                </div>
+
+                <div class="flex justify-end gap-3 border-t pt-4">
+                    <button type="button" onclick="closeModal('projectModal')" class="px-4 py-2 bg-slate-200 text-slate-700 rounded-xl text-sm hover:bg-slate-300">ยกเลิก</button>
+                    <button type="submit" class="px-5 py-2 bg-msu-navy text-white rounded-xl text-sm font-semibold hover:bg-blue-900 shadow">บันทึกข้อมูล</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: View Details -->
+    <div id="viewModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white w-full max-w-2xl rounded-2xl shadow-xl p-6 relative max-h-[90vh] overflow-y-auto">
+            <button onclick="closeModal('viewModal')" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+            <h3 class="text-lg font-bold text-msu-navy mb-1" id="v_title">-</h3>
+            <p class="text-xs text-slate-500 mb-4" id="v_code">-</p>
+
+            <div class="space-y-3 text-sm">
+                <div class="grid grid-cols-2 gap-2 bg-slate-50 p-3 rounded-xl border border-slate-100">
+                    <div><span class="text-slate-400 text-xs block">ผู้รับผิดชอบ</span><strong id="v_owner">-</strong></div>
+                    <div><span class="text-slate-400 text-xs block">ปีงบประมาณ</span><strong id="v_fiscalYear">-</strong></div>
+                    <div><span class="text-slate-400 text-xs block">ประเภทโครงการ</span><strong id="v_category">-</strong></div>
+                    <div><span class="text-slate-400 text-xs block">สอดคล้อง SDG</span><strong id="v_sdg">-</strong></div>
+                </div>
+
+                <div class="grid grid-cols-3 gap-2 bg-amber-50/50 p-3 rounded-xl border border-amber-100 text-center">
+                    <div><span class="text-slate-500 text-xs block">งบเสนอตั้ง</span><span class="font-bold text-slate-700" id="v_budget">฿0</span></div>
+                    <div><span class="text-slate-500 text-xs block">งบอนุมัติ</span><span class="font-bold text-emerald-600" id="v_approved">฿0</span></div>
+                    <div><span class="text-slate-500 text-xs block">เบิกจ่ายแล้ว</span><span class="font-bold text-amber-600" id="v_disbursed">฿0</span></div>
+                </div>
+
+                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                    <span class="text-slate-400 text-xs block mb-1">ระยะเวลาดำเนินโครงการ</span>
+                    <p id="v_dates" class="text-slate-700 font-medium">-</p>
+                </div>
+
+                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                    <span class="text-slate-400 text-xs block mb-1">วัตถุประสงค์</span>
+                    <p id="v_objective" class="text-slate-700 whitespace-pre-line">-</p>
+                </div>
+
+                <div id="v_driveContainer" class="pt-2">
+                    <a id="v_driveLink" href="#" target="_blank" class="inline-flex items-center gap-2 text-xs font-semibold text-blue-600 bg-blue-50 px-3 py-2 rounded-lg hover:bg-blue-100">
+                        <i class="fa-brands fa-google-drive text-base"></i> ดูเอกสารโครงการบน Google Drive
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Frontend Application Logic Script -->
+    <script>
+        // *** ใส่ URL ที่ได้จากการ Deploy Google Apps Script ตรงนี้ ***
+        const API_URL = "https://script.google.com/macros/s/AKfycbyoCoXgPP5LH7s7tPrqSXp3oMV2VdbYmwK9pzXJO0eyUKxalWzNgVJYw5hlCUCiJKKy/exec";
+
+        let projectsData = [];
+        let isAdminLoggedIn = false;
+        let currentUser = null;
+
+        // Initialize Application
+        document.addEventListener('DOMContentLoaded', () => {
+            checkAuthSession();
+            fetchProjects();
+        });
+
+        // Auth Session Check
+        function checkAuthSession() {
+            const savedUser = localStorage.getItem('msu_admin_user');
+            if (savedUser) {
+                isAdminLoggedIn = true;
+                currentUser = JSON.parse(savedUser);
+                updateUIState();
+            }
+        }
+
+        function updateUIState() {
+            const authBtnText = document.getElementById('authBtnText');
+            const viewModeText = document.getElementById('viewModeText');
+            const adminActionGroup = document.getElementById('adminActionGroup');
+
+            if (isAdminLoggedIn) {
+                authBtnText.textContent = `ออกจากระบบ (${currentUser.name || 'Admin'})`;
+                viewModeText.textContent = 'มุมมอง: ผู้ดูแลระบบ (Admin)';
+                adminActionGroup.classList.remove('hidden');
+            } else {
+                authBtnText.textContent = 'เข้าสู่ระบบ Admin';
+                viewModeText.textContent = 'มุมมอง: ผู้เข้าชมทั่วไป';
+                adminActionGroup.classList.add('hidden');
+            }
+            renderTable(projectsData);
+        }
+
+        function toggleRoleView() {
+            if (!isAdminLoggedIn) {
+                document.getElementById('loginModal').classList.remove('hidden');
+            } else {
+                Swal.fire('สถานะ', `คุณกำลังเข้าใช้งานในฐานะผู้ดูแลระบบ: ${currentUser.name}`, 'info');
+            }
+        }
+
+        function handleAuthAction() {
+            if (isAdminLoggedIn) {
+                Swal.fire({
+                    title: 'ยืนยันการออกจากระบบ?',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: 'ออกจากระบบ',
+                    cancelButtonText: 'ยกเลิก'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        localStorage.removeItem('msu_admin_user');
+                        isAdminLoggedIn = false;
+                        currentUser = null;
+                        updateUIState();
+                        Swal.fire('เรียบร้อย', 'ออกจากระบบแล้ว', 'success');
+                    }
+                });
+            } else {
+                document.getElementById('loginModal').classList.remove('hidden');
+            }
+        }
+
+        async function submitLogin(e) {
+            e.preventDefault();
+            const username = document.getElementById('loginUsername').value;
+            const password = document.getElementById('loginPassword').value;
+
+            Swal.showLoading();
+            try {
+                const res = await fetch(API_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'login', username, password })
+                });
+                const result = await res.json();
+
+                if (result.status === 'success') {
+                    isAdminLoggedIn = true;
+                    currentUser = result.user;
+                    localStorage.setItem('msu_admin_user', JSON.stringify(currentUser));
+                    closeModal('loginModal');
+                    updateUIState();
+                    Swal.fire('สำเร็จ', 'เข้าสู่ระบบเรียบร้อยแล้ว', 'success');
+                } else {
+                    Swal.fire('ผิดพลาด', result.message || 'Username หรือ Password ไม่ถูกต้อง', 'error');
+                }
+            } catch (err) {
+                Swal.fire('เกิดข้อผิดพลาด', 'ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้', 'error');
+            }
+        }
+
+        // Fetch All Projects
+        async function fetchProjects() {
+            try {
+                const res = await fetch(`${API_URL}?action=getProjects`);
+                const result = await res.json();
+                if (result.status === 'success') {
+                    projectsData = result.data;
+                    populateYearFilter(projectsData);
+                    calculateStats(projectsData);
+                    renderTable(projectsData);
+                }
+            } catch (err) {
+                console.error('Fetch Error:', err);
+                document.getElementById('projectsTableBody').innerHTML = `
+                    <tr><td colspan="7" class="text-center py-6 text-rose-500">ไม่สามารถโหลดข้อมูลได้ กรุณาตรวจสอบการตั้งค่า API_URL</td></tr>
+                `;
+            }
+        }
+
+        // Stats Calculation
+        function calculateStats(data) {
+            let totalBudget = 0;
+            let totalDisbursed = 0;
+
+            data.forEach(p => {
+                totalBudget += parseFloat(p.approvedBudget || 0);
+                totalDisbursed += parseFloat(p.disbursedAmount || 0);
+            });
+
+            const remaining = totalBudget - totalDisbursed;
+
+            document.getElementById('statTotalProjects').textContent = data.length.toLocaleString();
+            document.getElementById('statTotalBudget').textContent = `฿${totalBudget.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
+            document.getElementById('statTotalDisbursed').textContent = `฿${totalDisbursed.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
+            document.getElementById('statTotalRemaining').textContent = `฿${remaining.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
+        }
+
+        // Filter Dropdowns
+        function populateYearFilter(data) {
+            const yearSelect = document.getElementById('filterYear');
+            const years = [...new Set(data.map(p => p.fiscalYear))].filter(Boolean).sort().reverse();
+            
+            yearSelect.innerHTML = '<option value="">-- ทุกปีงบประมาณ --</option>';
+            years.forEach(y => {
+                yearSelect.innerHTML += `<option value="${y}">ปีงบประมาณ ${y}</option>`;
+            });
+        }
+
+        function applyFilters() {
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const year = document.getElementById('filterYear').value;
+            const category = document.getElementById('filterCategory').value;
+
+            const filtered = projectsData.filter(p => {
+                const matchSearch = (p.title || '').toLowerCase().includes(search) || (p.owner || '').toLowerCase().includes(search) || (p.code || '').toLowerCase().includes(search);
+                const matchYear = !year || String(p.fiscalYear) === String(year);
+                const matchCategory = !category || p.category === category;
+                return matchSearch && matchYear && matchCategory;
+            });
+
+            calculateStats(filtered);
+            renderTable(filtered);
+        }
+
+        // Render Table Data
+        function renderTable(data) {
+            const tbody = document.getElementById('projectsTableBody');
+            if (!data || data.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" class="text-center py-8 text-slate-400">ไม่พบข้อมูลโครงการ</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = data.map(p => {
+                const appBudget = parseFloat(p.approvedBudget || 0);
+                const disBudget = parseFloat(p.disbursedAmount || 0);
+                
+                return `
+                <tr class="hover:bg-slate-50 transition">
+                    <td class="py-3 px-4">
+                        <span class="text-xs font-semibold text-msu-navy bg-blue-50 px-2 py-0.5 rounded border border-blue-100">${p.code}</span>
+                        <div class="font-medium text-slate-800 mt-1 hover:text-blue-600 cursor-pointer" onclick='viewProjectDetail("${p.id}")'>${p.title}</div>
+                    </td>
+                    <td class="py-3 px-4">
+                        <div class="text-slate-700">${p.owner}</div>
+                        <span class="text-xs text-slate-400">พ.ศ. ${p.fiscalYear}</span>
+                    </td>
+                    <td class="py-3 px-4">
+                        <span class="inline-block bg-slate-100 text-slate-700 text-xs px-2 py-1 rounded-md mb-1">${p.category}</span>
+                        ${p.sdg ? `<div class="text-xs text-emerald-600 font-medium">${p.sdg}</div>` : ''}
+                    </td>
+                    <td class="py-3 px-4 text-right font-medium text-slate-700">฿${appBudget.toLocaleString()}</td>
+                    <td class="py-3 px-4 text-right font-medium text-amber-600">฿${disBudget.toLocaleString()}</td>
+                    <td class="py-3 px-4 text-center">
+                        ${p.driveLink ? `<a href="${p.driveLink}" target="_blank" class="text-blue-500 hover:text-blue-700 text-lg"><i class="fa-brands fa-google-drive"></i></a>` : '<span class="text-slate-300">-</span>'}
+                    </td>
+                    <td class="py-3 px-4 text-center">
+                        <div class="flex items-center justify-center gap-2">
+                            <button onclick='viewProjectDetail("${p.id}")' class="p-1.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg text-xs" title="ดูรายละเอียด">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                            ${isAdminLoggedIn ? `
+                                <button onclick='editProject("${p.id}")' class="p-1.5 bg-amber-100 hover:bg-amber-200 text-amber-700 rounded-lg text-xs" title="แก้ไข">
+                                    <i class="fa-solid fa-pen-to-square"></i>
+                                </button>
+                                <button onclick='deleteProject("${p.id}")' class="p-1.5 bg-rose-100 hover:bg-rose-200 text-rose-700 rounded-lg text-xs" title="ลบ">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            ` : ''}
+                        </div>
+                    </td>
+                </tr>
+            `}).join('');
+        }
+
+        // View Project Detail Modal
+        function viewProjectDetail(id) {
+            const p = projectsData.find(item => String(item.id) === String(id));
+            if (!p) return;
+
+            document.getElementById('v_title').textContent = p.title;
+            document.getElementById('v_code').textContent = `รหัสโครงการ: ${p.code}`;
+            document.getElementById('v_owner').textContent = p.owner;
+            document.getElementById('v_fiscalYear').textContent = `พ.ศ. ${p.fiscalYear}`;
+            document.getElementById('v_category').textContent = p.category;
+            document.getElementById('v_sdg').textContent = p.sdg || '-';
+            document.getElementById('v_budget').textContent = `฿${parseFloat(p.budget || 0).toLocaleString()}`;
+            document.getElementById('v_approved').textContent = `฿${parseFloat(p.approvedBudget || 0).toLocaleString()}`;
+            document.getElementById('v_disbursed').textContent = `฿${parseFloat(p.disbursedAmount || 0).toLocaleString()}`;
+            document.getElementById('v_dates').textContent = `${p.startDate || 'ไม่ระบุ'} ถึง ${p.endDate || 'ไม่ระบุ'}`;
+            document.getElementById('v_objective').textContent = p.objective || 'ไม่ได้ระบุวัตถุประสงค์';
+
+            const driveContainer = document.getElementById('v_driveContainer');
+            if (p.driveLink) {
+                driveContainer.classList.remove('hidden');
+                document.getElementById('v_driveLink').href = p.driveLink;
+            } else {
+                driveContainer.classList.add('hidden');
+            }
+
+            document.getElementById('viewModal').classList.remove('hidden');
+        }
+
+        // Open Modal Add/Edit
+        function openProjectModal(isEdit = false) {
+            document.getElementById('projectForm').reset();
+            document.getElementById('p_id').value = '';
+            document.getElementById('modalTitle').textContent = isEdit ? 'แก้ไขข้อมูลโครงการ' : 'เพิ่มโครงการใหม่';
+            document.getElementById('projectModal').classList.remove('hidden');
+        }
+
+        function editProject(id) {
+            const p = projectsData.find(item => String(item.id) === String(id));
+            if (!p) return;
+
+            openProjectModal(true);
+            document.getElementById('p_id').value = p.id;
+            document.getElementById('p_code').value = p.code;
+            document.getElementById('p_title').value = p.title;
+            document.getElementById('p_owner').value = p.owner;
+            document.getElementById('p_fiscalYear').value = p.fiscalYear;
+            document.getElementById('p_category').value = p.category;
+            document.getElementById('p_budget').value = p.budget;
+            document.getElementById('p_approvedBudget').value = p.approvedBudget;
+            document.getElementById('p_disbursedAmount').value = p.disbursedAmount;
+            document.getElementById('p_startDate').value = p.startDate;
+            document.getElementById('p_endDate').value = p.endDate;
+            document.getElementById('p_sdg').value = p.sdg;
+            document.getElementById('p_driveLink').value = p.driveLink;
+            document.getElementById('p_objective').value = p.objective;
+        }
+
+        // Submit Project Form (Add / Edit)
+        async function submitProjectForm(e) {
+            e.preventDefault();
+            
+            const payload = {
+                action: document.getElementById('p_id').value ? 'updateProject' : 'addProject',
+                id: document.getElementById('p_id').value || `PRJ-${Date.now()}`,
+                code: document.getElementById('p_code').value,
+                title: document.getElementById('p_title').value,
+                owner: document.getElementById('p_owner').value,
+                fiscalYear: document.getElementById('p_fiscalYear').value,
+                category: document.getElementById('p_category').value,
+                budget: document.getElementById('p_budget').value,
+                approvedBudget: document.getElementById('p_approvedBudget').value,
+                disbursedAmount: document.getElementById('p_disbursedAmount').value,
+                startDate: document.getElementById('p_startDate').value,
+                endDate: document.getElementById('p_endDate').value,
+                sdg: document.getElementById('p_sdg').value,
+                driveLink: document.getElementById('p_driveLink').value,
+                objective: document.getElementById('p_objective').value
+            };
+
+            Swal.showLoading();
+            try {
+                const res = await fetch(API_URL, {
+                    method: 'POST',
+                    body: JSON.stringify(payload)
+                });
+                const result = await res.json();
+                if (result.status === 'success') {
+                    closeModal('projectModal');
+                    Swal.fire('สำเร็จ', 'บันทึกข้อมูลเรียบร้อยแล้ว', 'success');
+                    fetchProjects();
+                } else {
+                    Swal.fire('เกิดข้อผิดพลาด', result.message, 'error');
+                }
+            } catch (err) {
+                Swal.fire('เกิดข้อผิดพลาด', 'ไม่สามารถบันทึกข้อมูลได้', 'error');
+            }
+        }
+
+        // Delete Project
+        function deleteProject(id) {
+            Swal.fire({
+                title: 'ยืนยันการลบโครงการ?',
+                text: 'หากลบแล้วจะไม่สามารถกู้คืนข้อมูลได้',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#EF4444',
+                confirmButtonText: 'ลบข้อมูล',
+                cancelButtonText: 'ยกเลิก'
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    Swal.showLoading();
+                    try {
+                        const res = await fetch(API_URL, {
+                            method: 'POST',
+                            body: JSON.stringify({ action: 'deleteProject', id })
+                        });
+                        const resJson = await res.json();
+                        if (resJson.status === 'success') {
+                            Swal.fire('สำเร็จ', 'ลบโครงการเรียบร้อยแล้ว', 'success');
+                            fetchProjects();
+                        } else {
+                            Swal.fire('ผิดพลาด', resJson.message, 'error');
+                        }
+                    } catch (err) {
+                        Swal.fire('ผิดพลาด', 'ไม่สามารถลบข้อมูลได้', 'error');
+                    }
+                }
+            });
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.add('hidden');
+        }
+    </script>
+</body>
+</html>
