@@ -831,6 +831,46 @@
         function closeModal(id) {
             document.getElementById(id).classList.add('hidden');
         }
-    </script>
+        // ผูกปฏิทินภาษาไทย (พ.ศ.) เมื่อโหลดหน้าเว็บเสร็จ
+$(document).ready(function() {
+    const thaiCal = $.calendars.instance('thai', 'th');
+
+    $('#p_startDate_display').calendarsPicker({
+        calendar: thaiCal,
+        dateFormat: 'dd/mm/yyyy',
+        showAnim: 'fadeIn',
+        onSelect: function(dates) {
+            if (dates.length > 0) {
+                const dateObj = dates[0];
+                const yearCE = dateObj.year() - 543;
+                const month = String(dateObj.month()).padStart(2, '0');
+                const day = String(dateObj.day()).padStart(2, '0');
+                
+                // บันทึกค่า YYYY-MM-DD (ค.ศ.) ลง Hidden input เพื่อส่งเข้า Sheets
+                document.getElementById('p_startDate').value = `${yearCE}-${month}-${day}`;
+                $('#p_endDate_display').calendarsPicker('option', 'minDate', dateObj);
+            }
+        }
+    });
+
+    $('#p_endDate_display').calendarsPicker({
+        calendar: thaiCal,
+        dateFormat: 'dd/mm/yyyy',
+        showAnim: 'fadeIn',
+        onSelect: function(dates) {
+            if (dates.length > 0) {
+                const dateObj = dates[0];
+                const yearCE = dateObj.year() - 543;
+                const month = String(dateObj.month()).padStart(2, '0');
+                const day = String(dateObj.day()).padStart(2, '0');
+                
+                // บันทึกค่า YYYY-MM-DD (ค.ศ.) ลง Hidden input เพื่อส่งเข้า Sheets
+                document.getElementById('p_endDate').value = `${yearCE}-${month}-${day}`;
+                $('#p_startDate_display').calendarsPicker('option', 'maxDate', dateObj);
+            }
+        }
+    });
+});
+    </script>    
 </body>
 </html>
