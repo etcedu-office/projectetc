@@ -840,46 +840,91 @@
         function closeModal(id) {
             document.getElementById(id).classList.add('hidden');
         }
-        // ผูกปฏิทินภาษาไทย (พ.ศ.) เมื่อโหลดหน้าเว็บเสร็จ
+ // ผูกปฏิทินภาษาไทย (พ.ศ.) เมื่อโหลดหน้าเว็บเสร็จ
+// ฟังก์ชันแปลง ค.ศ. (YYYY-MM-DD) -> พ.ศ. (DD/MM/YYYY) เพื่อแสดงผล
+function formatCEtoBE(dateStr) {
+    if (!dateStr) return '';
+    const parts = dateStr.split('-');
+    if (parts.length !== 3) return dateStr;
+    const yearBE = parseInt(parts[0]) + 543;
+    return `${parts[2]}/${parts[1]}/${yearBE}`;
+}
+
+// ผูกปฏิทินไทย
 $(document).ready(function() {
-    const thaiCal = $.calendars.instance('thai', 'th');
+    if ($.calendars && $.calendars.instance) {
+        const thaiCal = $.calendars.instance('thai', 'th');
 
-    $('#p_startDate_display').calendarsPicker({
-        calendar: thaiCal,
-        dateFormat: 'dd/mm/yyyy',
-        showAnim: 'fadeIn',
-        onSelect: function(dates) {
-            if (dates.length > 0) {
-                const dateObj = dates[0];
-                const yearCE = dateObj.year() - 543;
-                const month = String(dateObj.month()).padStart(2, '0');
-                const day = String(dateObj.day()).padStart(2, '0');
-                
-                // บันทึกค่า YYYY-MM-DD (ค.ศ.) ลง Hidden input เพื่อส่งเข้า Sheets
-                document.getElementById('p_startDate').value = `${yearCE}-${month}-${day}`;
-                $('#p_endDate_display').calendarsPicker('option', 'minDate', dateObj);
+        $('#p_startDate_display').calendarsPicker({
+            calendar: thaiCal,
+            dateFormat: 'dd/mm/yyyy',
+            showAnim: 'fadeIn',
+            onSelect: function(dates) {
+                if (dates.length > 0) {
+                    const d = dates[0];
+                    const yearCE = d.year() - 543;
+                    const month = String(d.month()).padStart(2, '0');
+                    const day = String(d.day()).padStart(2, '0');
+                    document.getElementById('p_startDate').value = `${yearCE}-${month}-${day}`;
+                }
             }
-        }
-    });
+        });
 
-    $('#p_endDate_display').calendarsPicker({
-        calendar: thaiCal,
-        dateFormat: 'dd/mm/yyyy',
-        showAnim: 'fadeIn',
-        onSelect: function(dates) {
-            if (dates.length > 0) {
-                const dateObj = dates[0];
-                const yearCE = dateObj.year() - 543;
-                const month = String(dateObj.month()).padStart(2, '0');
-                const day = String(dateObj.day()).padStart(2, '0');
-                
-                // บันทึกค่า YYYY-MM-DD (ค.ศ.) ลง Hidden input เพื่อส่งเข้า Sheets
-                document.getElementById('p_endDate').value = `${yearCE}-${month}-${day}`;
-                $('#p_startDate_display').calendarsPicker('option', 'maxDate', dateObj);
+        $('#p_endDate_display').calendarsPicker({
+            calendar: thaiCal,
+            dateFormat: 'dd/mm/yyyy',
+            showAnim: 'fadeIn',
+            onSelect: function(dates) {
+                if (dates.length > 0) {
+                    const d = dates[0];
+                    const yearCE = d.year() - 543;
+                    const month = String(d.month()).padStart(2, '0');
+                    const day = String(d.day()).padStart(2, '0');
+                    document.getElementById('p_endDate').value = `${yearCE}-${month}-${day}`;
+                }
             }
-        }
-    });
+        });
+    }
 });
+
+// อัปเดตฟังก์ชัน openProjectModal
+function openProjectModal(isEdit = false) {
+    document.getElementById('projectForm').reset();
+    document.getElementById('p_id').value = '';
+    document.getElementById('p_startDate').value = '';
+    document.getElementById('p_endDate').value = '';
+    document.getElementById('p_startDate_display').value = '';
+    document.getElementById('p_endDate_display').value = '';
+    document.getElementById('modalTitle').textContent = isEdit ? 'แก้ไขข้อมูลโครงการ' : 'เพิ่มโครงการใหม่';
+    document.getElementById('projectModal').classList.remove('hidden');
+}
+
+// อัปเดตฟังก์ชัน editProject
+function editProject(id) {
+    const p = projectsData.find(item => String(item.id) === String(id));
+    if (!p) return;
+
+    openProjectModal(true);
+    document.getElementById('p_id').value = p.id;
+    document.getElementById('p_code').value = p.code;
+    document.getElementById('p_title').value = p.title;
+    document.getElementById('p_owner').value = p.owner;
+    document.getElementById('p_fiscalYear').value = p.fiscalYear;
+    document.getElementById('p_category').value = p.category;
+    document.getElementById('p_budget').value = p.budget;
+    document.getElementById('p_approvedBudget').value = p.approvedBudget;
+    document.getElementById('p_disbursedAmount').value = p.disbursedAmount;
+    document.getElementById('p_status').value = p.status || 'อนุมัติโครงการ';
+    document.getElementById('p_sdg').value = p.sdg;
+    document.getElementById('p_driveLink').value = p.driveLink;
+    document.getElementById('p_objective').value = p.objective;
+
+    // ใส่ค่าวันที่ทั้งแบบ hidden (ค.ศ.) และ display (พ.ศ.)
+    document.getElementById('p_startDate').value = p.startDate || '';
+    document.getElementById('p_endDate').value = p.endDate || '';
+    document.getElementById('p_startDate_display').value = formatCEtoBE(p.startDate);
+    document.getElementById('p_endDate_display').value = formatCEtoBE(p.endDate);
+}
     </script>    
 </body>
 </html>
