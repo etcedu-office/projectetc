@@ -861,7 +861,9 @@
             document.getElementById(id).classList.add('hidden');
         }
  // ผูกปฏิทินภาษาไทย (พ.ศ.) เมื่อโหลดหน้าเว็บเสร็จ
-// ฟังก์ชันแปลง ค.ศ. (YYYY-MM-DD) -> พ.ศ. (DD/MM/YYYY) เพื่อแสดงผล
+let fpStart, fpEnd;
+
+// ฟังก์ชันแปลง ค.ศ. (YYYY-MM-DD) -> พ.ศ. (DD/MM/YYYY) สำหรับแสดงผล
 function formatCEtoBE(dateStr) {
     if (!dateStr) return '';
     const parts = dateStr.split('-');
@@ -870,56 +872,67 @@ function formatCEtoBE(dateStr) {
     return `${parts[2]}/${parts[1]}/${yearBE}`;
 }
 
-// ผูกปฏิทินไทย
-$(document).ready(function() {
-    if ($.calendars && $.calendars.instance) {
-        const thaiCal = $.calendars.instance('thai', 'th');
-
-        $('#p_startDate_display').calendarsPicker({
-            calendar: thaiCal,
-            dateFormat: 'dd/mm/yyyy',
-            showAnim: 'fadeIn',
-            onSelect: function(dates) {
-                if (dates.length > 0) {
-                    const d = dates[0];
-                    const yearCE = d.year() - 543;
-                    const month = String(d.month()).padStart(2, '0');
-                    const day = String(d.day()).padStart(2, '0');
-                    document.getElementById('p_startDate').value = `${yearCE}-${month}-${day}`;
-                }
+// ผูก Flatpickr เมื่อหน้าเว็บพร้อม
+document.addEventListener("DOMContentLoaded", function() {
+    
+    // ตั้งค่าวันเริ่มต้น
+    fpStart = flatpickr("#p_startDate_display", {
+        locale: "th",
+        dateFormat: "d/m/Y",
+        onChange: function(selectedDates, dateStr) {
+            if (selectedDates.length > 0) {
+                const date = selectedDates[0];
+                const day = String(date.getDate()).padStart(2, '0');
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const yearCE = date.getFullYear();
+                const yearBE = yearCE + 543;
+                
+                // แสดง พ.ศ. ในช่อง
+                document.getElementById('p_startDate_display').value = `${day}/${month}/${yearBE}`;
+                // บันทึก ค.ศ. ลง Hidden Input ส่งเข้า Google Sheets
+                document.getElementById('p_startDate').value = `${yearCE}-${month}-${day}`;
+                
+                // ล็อกวันสิ้นสุดห้ามเลือกก่อนวันเริ่มต้น
+                if (fpEnd) fpEnd.set('minDate', date);
             }
-        });
+        }
+    });
 
-        $('#p_endDate_display').calendarsPicker({
-            calendar: thaiCal,
-            dateFormat: 'dd/mm/yyyy',
-            showAnim: 'fadeIn',
-            onSelect: function(dates) {
-                if (dates.length > 0) {
-                    const d = dates[0];
-                    const yearCE = d.year() - 543;
-                    const month = String(d.month()).padStart(2, '0');
-                    const day = String(d.day()).padStart(2, '0');
-                    document.getElementById('p_endDate').value = `${yearCE}-${month}-${day}`;
-                }
+    // ตั้งค่าวันสิ้นสุด
+    fpEnd = flatpickr("#p_endDate_display", {
+        locale: "th",
+        dateFormat: "d/m/Y",
+        onChange: function(selectedDates, dateStr) {
+            if (selectedDates.length > 0) {
+                const date = selectedDates[0];
+                const day = String(date.getDate()).padStart(2, '0');
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const yearCE = date.getFullYear();
+                const yearBE = yearCE + 543;
+                
+                document.getElementById('p_endDate_display').value = `${day}/${month}/${yearBE}`;
+                document.getElementById('p_endDate').value = `${yearCE}-${month}-${day}`;
+                
+                if (fpStart) fpStart.set('maxDate', date);
             }
-        });
-    }
+        }
+    });
 });
 
-// อัปเดตฟังก์ชัน openProjectModal
+// ฟังก์ชันเปิด Modal สำหรับ เพิ่ม/แก้ไข
 function openProjectModal(isEdit = false) {
     document.getElementById('projectForm').reset();
     document.getElementById('p_id').value = '';
     document.getElementById('p_startDate').value = '';
     document.getElementById('p_endDate').value = '';
-    document.getElementById('p_startDate_display').value = '';
-    document.getElementById('p_endDate_display').value = '';
+    if (fpStart) fpStart.clear();
+    if (fpEnd) fpEnd.clear();
+    
     document.getElementById('modalTitle').textContent = isEdit ? 'แก้ไขข้อมูลโครงการ' : 'เพิ่มโครงการใหม่';
     document.getElementById('projectModal').classList.remove('hidden');
 }
 
-// อัปเดตฟังก์ชัน editProject
+// ฟังก์ชันดึงข้อมูลมาแก้ไข
 function editProject(id) {
     const p = projectsData.find(item => String(item.id) === String(id));
     if (!p) return;
@@ -939,12 +952,15 @@ function editProject(id) {
     document.getElementById('p_driveLink').value = p.driveLink;
     document.getElementById('p_objective').value = p.objective;
 
-    // ใส่ค่าวันที่ทั้งแบบ hidden (ค.ศ.) และ display (พ.ศ.)
+    // ตั้งค่าวันที่
     document.getElementById('p_startDate').value = p.startDate || '';
     document.getElementById('p_endDate').value = p.endDate || '';
+    
+    if (p.startDate && fpStart) fpStart.setDate(p.startDate);
+    if (p.endDate && fpEnd) fpEnd.setDate(p.endDate);
+    
     document.getElementById('p_startDate_display').value = formatCEtoBE(p.startDate);
     document.getElementById('p_endDate_display').value = formatCEtoBE(p.endDate);
-}
-    </script>    
+}   
 </body>
 </html>
