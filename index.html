@@ -14,7 +14,24 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- jQuery & Thai Calendar Plugins -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/kbwood/calendars@2.0.2/css/jquery.calendars.picker.css">
+<script src="https://cdn.jsdelivr.net/gh/kbwood/calendars@2.0.2/js/jquery.plugin.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/kbwood/calendars@2.0.2/js/jquery.calendars.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/kbwood/calendars@2.0.2/js/jquery.calendars.plus.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/kbwood/calendars@2.0.2/js/jquery.calendars.picker.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/kbwood/calendars@2.0.2/js/jquery.calendars.thai.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/kbwood/calendars@2.0.2/js/jquery.calendars.thai-th.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/kbwood/calendars@2.0.2/js/jquery.calendars.picker-th.js"></script>
 
+<style>
+    /* ตกแต่ง ปฏิทินให้เข้ากับธีม Tailwind */
+    .calendars-popup { border-radius: 0.75rem !important; font-family: 'Prompt', sans-serif !important; border: 1px solid #e2e8f0 !important; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1) !important; }
+    .calendars-nav, .calendars-ctrl { background-color: #1E3A8A !important; color: white !important; }
+    .calendars-month th { background-color: #F8FAFC !important; color: #475569 !important; }
+    .calendars-month td a.calendars-selected { background-color: #EAB308 !important; color: #0F172A !important; font-weight: bold; }
+</style>
     <script>
         tailwind.config = {
             theme: {
