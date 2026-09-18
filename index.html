@@ -12,37 +12,9 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- SweetAlert2 -->    
+    <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    
-    
-<!-- jQuery (ต้องอยู่ก่อน Plugin เสมอ) -->
-<!-- jQuery (ต้องอยู่ก่อน Plugin เสมอ) -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-<!-- jQuery Calendars CSS & Scripts (พาธถูกต้อง) -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/kbwood/calendars@2.1.0/jquery.calendars.picker.css">
-<script src="https://cdn.jsdelivr.net/gh/kbwood/calendars@2.1.0/jquery.plugin.js"></script>
-<script src="https://cdn.jsdelivr.net/gh/kbwood/calendars@2.1.0/jquery.calendars.js"></script>
-<script src="https://cdn.jsdelivr.net/gh/kbwood/calendars@2.1.0/jquery.calendars.plus.js"></script>
-<script src="https://cdn.jsdelivr.net/gh/kbwood/calendars@2.1.0/jquery.calendars.picker.js"></script>
-<script src="https://cdn.jsdelivr.net/gh/kbwood/calendars@2.1.0/jquery.calendars.thai.js"></script>
-<script src="https://cdn.jsdelivr.net/gh/kbwood/calendars@2.1.0/jquery.calendars.thai-th.js"></script>
-<script src="https://cdn.jsdelivr.net/gh/kbwood/calendars@2.1.0/jquery.calendars.picker-th.js"></script>
-
-<style>
-    /* บังคับ z-index ให้แสดงผลทับ Modal */
-    .calendars-popup { 
-        z-index: 99999 !important; 
-        font-family: 'Prompt', sans-serif !important;
-        border-radius: 0.75rem !important;
-        border: 1px solid #cbd5e1 !important;
-        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2) !important;
-    }
-    .calendars-nav, .calendars-ctrl { background-color: #1E3A8A !important; color: white !important; }
-    .calendars-month th { background-color: #F8FAFC !important; color: #475569 !important; }
-    .calendars-month td a.calendars-selected { background-color: #EAB308 !important; color: #0F172A !important; font-weight: bold; }
-</style>
     <script>
         tailwind.config = {
             theme: {
@@ -346,19 +318,17 @@
                         </select>
                     </div>
                 </div>
-           <!-- วันเริ่มต้น / วันสิ้นสุด -->
-<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-    <div>
-        <label class="block text-xs font-semibold text-slate-700 mb-1">วันเริ่มต้น</label>
-        <input type="text" id="p_startDate_display" placeholder="วว/ดด/ปปปป (พ.ศ.)" readonly class="w-full px-3 py-2 text-sm border border-slate-300 rounded-xl bg-white cursor-pointer focus:ring-2 focus:ring-msu-navy">
-        <input type="hidden" id="p_startDate">
-    </div>
-    <div>
-        <label class="block text-xs font-semibold text-slate-700 mb-1">วันสิ้นสุด</label>
-        <input type="text" id="p_endDate_display" placeholder="วว/ดด/ปปปป (พ.ศ.)" readonly class="w-full px-3 py-2 text-sm border border-slate-300 rounded-xl bg-white cursor-pointer focus:ring-2 focus:ring-msu-navy">
-        <input type="hidden" id="p_endDate">
-    </div>
-</div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">วันเริ่มต้น</label>
+                        <input type="date" id="p_startDate" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-xl">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">วันสิ้นสุด</label>
+                        <input type="date" id="p_endDate" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-xl">
+                    </div>
+                </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
@@ -842,107 +812,6 @@
         function closeModal(id) {
             document.getElementById(id).classList.add('hidden');
         }
- // ผูกปฏิทินภาษาไทย (พ.ศ.) เมื่อโหลดหน้าเว็บเสร็จ
-let fpStart, fpEnd;
-
-// ฟังก์ชันแปลง ค.ศ. (YYYY-MM-DD) -> พ.ศ. (DD/MM/YYYY) สำหรับแสดงผล
-function formatCEtoBE(dateStr) {
-    if (!dateStr) return '';
-    const parts = dateStr.split('-');
-    if (parts.length !== 3) return dateStr;
-    const yearBE = parseInt(parts[0]) + 543;
-    return `${parts[2]}/${parts[1]}/${yearBE}`;
-}
-
-// ผูก Flatpickr เมื่อหน้าเว็บพร้อม
-document.addEventListener("DOMContentLoaded", function() {
-    
-    // ตั้งค่าวันเริ่มต้น
-    fpStart = flatpickr("#p_startDate_display", {
-        locale: "th",
-        dateFormat: "d/m/Y",
-        onChange: function(selectedDates, dateStr) {
-            if (selectedDates.length > 0) {
-                const date = selectedDates[0];
-                const day = String(date.getDate()).padStart(2, '0');
-                const month = String(date.getMonth() + 1).padStart(2, '0');
-                const yearCE = date.getFullYear();
-                const yearBE = yearCE + 543;
-                
-                // แสดง พ.ศ. ในช่อง
-                document.getElementById('p_startDate_display').value = `${day}/${month}/${yearBE}`;
-                // บันทึก ค.ศ. ลง Hidden Input ส่งเข้า Google Sheets
-                document.getElementById('p_startDate').value = `${yearCE}-${month}-${day}`;
-                
-                // ล็อกวันสิ้นสุดห้ามเลือกก่อนวันเริ่มต้น
-                if (fpEnd) fpEnd.set('minDate', date);
-            }
-        }
-    });
-
-    // ตั้งค่าวันสิ้นสุด
-    fpEnd = flatpickr("#p_endDate_display", {
-        locale: "th",
-        dateFormat: "d/m/Y",
-        onChange: function(selectedDates, dateStr) {
-            if (selectedDates.length > 0) {
-                const date = selectedDates[0];
-                const day = String(date.getDate()).padStart(2, '0');
-                const month = String(date.getMonth() + 1).padStart(2, '0');
-                const yearCE = date.getFullYear();
-                const yearBE = yearCE + 543;
-                
-                document.getElementById('p_endDate_display').value = `${day}/${month}/${yearBE}`;
-                document.getElementById('p_endDate').value = `${yearCE}-${month}-${day}`;
-                
-                if (fpStart) fpStart.set('maxDate', date);
-            }
-        }
-    });
-});
-
-// ฟังก์ชันเปิด Modal สำหรับ เพิ่ม/แก้ไข
-function openProjectModal(isEdit = false) {
-    document.getElementById('projectForm').reset();
-    document.getElementById('p_id').value = '';
-    document.getElementById('p_startDate').value = '';
-    document.getElementById('p_endDate').value = '';
-    if (fpStart) fpStart.clear();
-    if (fpEnd) fpEnd.clear();
-    
-    document.getElementById('modalTitle').textContent = isEdit ? 'แก้ไขข้อมูลโครงการ' : 'เพิ่มโครงการใหม่';
-    document.getElementById('projectModal').classList.remove('hidden');
-}
-
-// ฟังก์ชันดึงข้อมูลมาแก้ไข
-function editProject(id) {
-    const p = projectsData.find(item => String(item.id) === String(id));
-    if (!p) return;
-
-    openProjectModal(true);
-    document.getElementById('p_id').value = p.id;
-    document.getElementById('p_code').value = p.code;
-    document.getElementById('p_title').value = p.title;
-    document.getElementById('p_owner').value = p.owner;
-    document.getElementById('p_fiscalYear').value = p.fiscalYear;
-    document.getElementById('p_category').value = p.category;
-    document.getElementById('p_budget').value = p.budget;
-    document.getElementById('p_approvedBudget').value = p.approvedBudget;
-    document.getElementById('p_disbursedAmount').value = p.disbursedAmount;
-    document.getElementById('p_status').value = p.status || 'อนุมัติโครงการ';
-    document.getElementById('p_sdg').value = p.sdg;
-    document.getElementById('p_driveLink').value = p.driveLink;
-    document.getElementById('p_objective').value = p.objective;
-
-    // ตั้งค่าวันที่
-    document.getElementById('p_startDate').value = p.startDate || '';
-    document.getElementById('p_endDate').value = p.endDate || '';
-    
-    if (p.startDate && fpStart) fpStart.setDate(p.startDate);
-    if (p.endDate && fpEnd) fpEnd.setDate(p.endDate);
-    
-    document.getElementById('p_startDate_display').value = formatCEtoBE(p.startDate);
-    document.getElementById('p_endDate_display').value = formatCEtoBE(p.endDate);
-}   
+    </script>
 </body>
 </html>
