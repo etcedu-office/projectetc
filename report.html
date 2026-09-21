@@ -69,7 +69,7 @@
         <h2 class="text-xs sm:text-sm font-semibold text-slate-300 uppercase tracking-wider">
           📊 งบประมาณจัดสรรรวมจำแนกตามปีงบประมาณ
         </h2>
-        <span class="text-[11px] sm:text-xs text-slate-400">แท็บ FiscalYears</span>
+        <span class="text-[11px] sm:text-xs text-slate-400">แยกตามปีงบประมาณ</span>
       </div>
       <div id="fiscal-years-cards" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         <div class="bg-[#151e32] border border-slate-800 rounded-xl p-4 animate-pulse">
@@ -123,7 +123,7 @@
           <p class="text-[11px] sm:text-xs text-slate-400">งบจัดสรรรวม vs งบที่อนุมัติ vs เบิกจ่ายจริง</p>
         </div>
         <span class="text-[10px] sm:text-xs text-indigo-400 font-medium bg-indigo-500/10 px-2 py-0.5 rounded self-start sm:self-auto">
-          หน่วย: บาท (THB) เต็มจำนวน
+          หน่วย: บาท (THB)
         </span>
       </div>
       <div class="overflow-x-auto custom-scrollbar pb-2">
@@ -140,7 +140,7 @@
         <p class="text-[11px] sm:text-xs text-slate-400">เลือกปีงบประมาณเพื่อคำนวณสัดส่วนโครงการ</p>
       </div>
       <div class="flex items-center gap-2 w-full sm:w-auto">
-        <label for="yearFilterSelect" class="text-xs text-slate-400 font-medium whitespace-nowrap">ปีงบฯ:</label>
+        <label for="yearFilterSelect" class="text-xs text-slate-400 font-medium whitespace-nowrap">เลือกปีงบฯ:</label>
         <select id="yearFilterSelect" onchange="onYearFilterChange()" class="w-full sm:w-auto bg-[#0b1120] border border-slate-700 text-slate-200 text-xs sm:text-sm rounded-lg px-3 py-2 outline-none focus:border-indigo-500 cursor-pointer">
           <option value="ALL">ทุกปีงบประมาณ (ภาพรวม)</option>
         </select>
