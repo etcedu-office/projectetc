@@ -9,7 +9,7 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <!-- Google Font: Prompt -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   
   <style>
@@ -98,7 +98,7 @@
       </div>
     </div>
 
-    <!-- ส่วนที่ 3: กราฟแท่งเปรียบเทียบงบประมาณรายปี (แกนซ้ายจำนวนเต็มบาท) -->
+    <!-- ส่วนที่ 3: กราฟแท่งเปรียบเทียบงบประมาณรายปี -->
     <div class="bg-[#151e32] border border-slate-800 rounded-2xl p-5 shadow-sm">
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
         <div>
@@ -173,12 +173,12 @@
 
     </div>
 
-    <!-- ส่วนที่ 5: สัดส่วนผู้รับผิดชอบโครงการ (เพิ่มใหม่: Project Owners พร้อมจำนวนและเปอร์เซ็นต์) -->
+    <!-- ส่วนที่ 5: สัดส่วนผู้รับผิดชอบโครงการ (ปรับแกน X และ Y ชัดเจน + หลากสีรายบุคคล) -->
     <div class="bg-[#151e32] border border-slate-800 rounded-2xl p-5 shadow-sm space-y-4">
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-3">
         <div>
           <h3 class="text-base font-semibold text-slate-200">สัดส่วนจำนวนโครงการจำแนกตามผู้รับผิดชอบ (Project Owners)</h3>
-          <p class="text-xs text-slate-400">เปรียบเทียบภาระงานและสัดส่วนร้อยละ (%) ของผู้รับผิดชอบแต่ละท่าน</p>
+          <p class="text-xs text-slate-400">เปรียบเทียบภาระงานและสัดส่วนร้อยละ (%) แสดงชื่อและหน่วยแกน X/Y ชัดเจน</p>
         </div>
         <span id="owner-total-badge" class="text-xs text-indigo-400 font-semibold bg-indigo-500/10 px-3 py-1 rounded-full border border-indigo-500/20 self-start sm:self-auto">
           0 ผู้รับผิดชอบ
@@ -187,17 +187,20 @@
 
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
         
-        <!-- กราฟแท่งแนวนอนแสดงผู้รับผิดชอบ -->
-        <div class="lg:col-span-2 bg-[#090e1a] border border-slate-800/90 rounded-xl p-4 shadow-inner">
-          <div class="h-72">
+        <!-- กราฟแท่งแนวนอนหลากสี พร้อมชื่อแกน X และ Y ชัดเจน -->
+        <div class="lg:col-span-2 bg-[#090e1a] border border-slate-800/90 rounded-xl p-5 shadow-inner">
+          <div class="h-80">
             <canvas id="ownerBarChart"></canvas>
           </div>
         </div>
 
-        <!-- กล่องตารางสรุปรายชื่อ พร้อมจำนวนและเปอร์เซ็นต์ (%) -->
+        <!-- กล่องตารางสรุปรายชื่อ พร้อมสีและเปอร์เซ็นต์กำกับ -->
         <div class="bg-[#090e1a] border border-slate-800/90 rounded-xl p-4 shadow-inner">
-          <h4 class="text-xs font-semibold text-slate-300 uppercase tracking-wider mb-3">สรุปสัดส่วนภาระงาน</h4>
-          <div id="owner-summary-list" class="space-y-2 text-xs max-h-64 overflow-y-auto pr-1"></div>
+          <h4 class="text-xs font-semibold text-slate-300 uppercase tracking-wider mb-3 flex items-center justify-between">
+            <span>สรุปสัดส่วนภาระงาน</span>
+            <span class="text-[11px] text-slate-400 font-normal">ร้อยละ (%)</span>
+          </h4>
+          <div id="owner-summary-list" class="space-y-2 text-xs max-h-72 overflow-y-auto pr-1"></div>
         </div>
 
       </div>
@@ -210,10 +213,24 @@
 
     Chart.defaults.font.family = "'Prompt', sans-serif";
 
+    // ชุดสีเฉพาะตัวสำหรับผู้รับผิดชอบแต่ละท่าน (Distinct Color Palette)
+    const OWNER_PALETTE = [
+      '#818cf8', // Indigo
+      '#06b6d4', // Cyan
+      '#10b981', // Emerald
+      '#f59e0b', // Amber
+      '#ec4899', // Pink
+      '#8b5cf6', // Violet
+      '#f97316', // Orange
+      '#3b82f6', // Blue
+      '#14b8a6', // Teal
+      '#a855f7'  // Purple
+    ];
+
     let globalProjects = [];
     let globalFiscalYears = [];
 
-    // 1. กราฟแท่งเปรียบเทียบงบประมาณรายปี (แกนซ้ายจำนวนเต็มบาท)
+    // 1. กราฟแท่งเปรียบเทียบงบประมาณรายปี
     const yearlyCtx = document.getElementById('yearlyComparisonChart').getContext('2d');
     const yearlyChart = new Chart(yearlyCtx, {
       type: 'bar',
@@ -282,7 +299,7 @@
       }
     });
 
-    // 3. กราฟแท่งแนวนอนแสดงผู้รับผิดชอบโครงการ (Horizontal Bar Chart พร้อมคิด %)
+    // 3. กราฟแท่งแนวนอนผู้รับผิดชอบ (ปรับแต่งแกน X และ Y ให้ชัดเจน)
     const ownerCtx = document.getElementById('ownerBarChart').getContext('2d');
     const ownerBarChart = new Chart(ownerCtx, {
       type: 'bar',
@@ -291,15 +308,18 @@
         datasets: [{
           label: 'จำนวนโครงการ',
           data: [],
-          backgroundColor: '#818cf8',
-          hoverBackgroundColor: '#6366f1',
-          borderRadius: 6
+          backgroundColor: [],
+          borderRadius: 6,
+          barPercentage: 0.68
         }]
       },
       options: {
-        indexAxis: 'y', // แนวนอน
+        indexAxis: 'y', // แสดงเป็นแท่งแนวนอน
         responsive: true,
         maintainAspectRatio: false,
+        layout: {
+          padding: { left: 5, right: 20, top: 10, bottom: 10 }
+        },
         plugins: {
           legend: { display: false },
           tooltip: {
@@ -308,7 +328,7 @@
                 const total = context.dataset.data.reduce((acc, curr) => acc + curr, 0);
                 const value = context.raw || 0;
                 const pct = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
-                return ` ภาระงาน: ${value} โครงการ (${pct}% ของโครงการทั้งหมด)`;
+                return ` ภาระงาน: ${value} โครงการ (${pct}% ของทั้งหมด)`;
               }
             }
           }
@@ -318,13 +338,32 @@
             grid: { color: '#1e293b' }, 
             ticks: { 
               color: '#94a3b8',
+              font: { size: 11, weight: '500' },
               stepSize: 1,
-              callback: function(v) { return v + ' งาน'; }
-            } 
+              callback: function(v) { return v + ' งาน'; } // ระบุหน่วยชัดเจน
+            },
+            title: {
+              display: true,
+              text: 'จำนวนโครงการ (งาน)',
+              color: '#94a3b8',
+              font: { size: 12, weight: 'bold' },
+              padding: { top: 12 }
+            }
           },
           y: { 
-            grid: { display: false }, 
-            ticks: { color: '#cbd5e1', font: { size: 11 } } 
+            grid: { color: 'rgba(30, 41, 59, 0.4)' }, 
+            ticks: { 
+              color: '#f1f5f9', // สีขาวสว่าง ชัดเจน
+              font: { size: 12, weight: '500' },
+              padding: 8
+            },
+            title: {
+              display: true,
+              text: 'ผู้รับผิดชอบโครงการ',
+              color: '#94a3b8',
+              font: { size: 12, weight: 'bold' },
+              padding: { bottom: 8 }
+            }
           }
         }
       }
@@ -339,7 +378,6 @@
       return '#a78bfa';
     }
 
-    // ฟังก์ชันดึงข้อมูลจาก Apps Script
     async function fetchDashboardData() {
       const statusText = document.getElementById('status-text');
       try {
@@ -604,47 +642,53 @@
       });
     }
 
-    // ฟังก์ชันใหม่: แสดงผลสัดส่วนผู้รับผิดชอบโครงการ (คำนวณ % + กราฟแท่งแนวนอน)
+    // ฟังก์ชันแสดงผลผู้รับผิดชอบโครงการ (ปรับสีเฉพาะบุคคล + ระบุแกน X/Y ชัดเจน)
     function renderOwnerSection(ownerCounts, totalCount) {
       const summaryContainer = document.getElementById('owner-summary-list');
       const badgeElem = document.getElementById('owner-total-badge');
       summaryContainer.innerHTML = '';
 
-      // จัดเรียงผู้รับผิดชอบตามจำนวนโครงการจากมากไปน้อย
       const sortedOwners = Object.keys(ownerCounts).sort((a, b) => ownerCounts[b] - ownerCounts[a]);
       badgeElem.innerText = `${sortedOwners.length} ผู้รับผิดชอบ`;
 
       if (sortedOwners.length === 0 || totalCount === 0) {
         ownerBarChart.data.labels = ['ไม่มีข้อมูล'];
         ownerBarChart.data.datasets[0].data = [0];
+        ownerBarChart.data.datasets[0].backgroundColor = ['#334155'];
         ownerBarChart.update();
         summaryContainer.innerHTML = '<p class="text-slate-500 text-center py-4 text-xs">ไม่มีข้อมูลผู้รับผิดชอบ</p>';
         return;
       }
 
       const counts = sortedOwners.map(name => ownerCounts[name]);
+      // แมปสีประจำตัวแต่ละคนไม่ซ้ำกัน
+      const barColors = sortedOwners.map((_, idx) => OWNER_PALETTE[idx % OWNER_PALETTE.length]);
       
-      // อัปเดตกราฟแท่งแนวนอน
       ownerBarChart.data.labels = sortedOwners;
       ownerBarChart.data.datasets[0].data = counts;
+      ownerBarChart.data.datasets[0].backgroundColor = barColors;
       ownerBarChart.update();
 
-      // แสดงรายการสรุปรายชื่อ พร้อมหลอดเปอร์เซ็นต์ย่อย
+      // สร้างตารางสรุปด้านขวาให้สีตรงกัน
       sortedOwners.forEach((name, idx) => {
         const count = ownerCounts[name];
         const pct = totalCount > 0 ? ((count / totalCount) * 100).toFixed(1) : 0;
+        const color = barColors[idx];
 
         summaryContainer.innerHTML += `
-          <div class="p-2 rounded-lg bg-[#111928]/90 border border-slate-800/60 hover:border-slate-700/80 transition">
-            <div class="flex items-center justify-between gap-2 mb-1">
-              <span class="text-slate-200 font-medium truncate">${idx + 1}. ${name}</span>
+          <div class="p-2.5 rounded-lg bg-[#111928]/90 border border-slate-800/60 hover:border-slate-700/80 transition">
+            <div class="flex items-center justify-between gap-2 mb-1.5">
+              <div class="flex items-center gap-2 min-w-0">
+                <span class="w-2.5 h-2.5 rounded-full flex-shrink-0" style="background-color: ${color}"></span>
+                <span class="text-slate-200 font-medium truncate">${idx + 1}. ${name}</span>
+              </div>
               <div class="flex items-center gap-1.5 flex-shrink-0">
                 <span class="text-slate-300 font-semibold">${count} งาน</span>
-                <span class="text-indigo-400 font-bold">(${pct}%)</span>
+                <span class="font-bold" style="color: ${color}">(${pct}%)</span>
               </div>
             </div>
             <div class="w-full bg-slate-800 rounded-full h-1.5 overflow-hidden">
-              <div class="bg-indigo-500 h-1.5 rounded-full" style="width: ${pct}%"></div>
+              <div class="h-1.5 rounded-full transition-all duration-500" style="width: ${pct}%; background-color: ${color}"></div>
             </div>
           </div>
         `;
