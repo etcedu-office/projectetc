@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>ระบบติดตามกำหนดการและแผนภูมิแกนต์ชาร์ต 12 เดือน (Project Tracking)</title>
+  <title>ระบบติดตามกำหนดการและแผนภูมิแกนต์ชาร์ตปีงบประมาณไทย (Project Tracking)</title>
   
   <!-- Tailwind CSS & Chart.js -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -22,10 +22,6 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   
-  <!-- Chart.js Date Adapter (date-fns) สำหรับแสดงแกนเดือนเต็ม 12 เดือน -->
-  <script src="https://cdn.jsdelivr.net/npm/date-fns@2.30.0/index.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
-
   <!-- Google Font: Prompt -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com">
@@ -60,7 +56,7 @@
           <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
         </div>
         <h2 class="text-lg font-bold text-slate-900 dark:text-white">พื้นที่เฉพาะผู้บริหาร & Admin</h2>
-        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">กรุณาเข้าสู่ระบบด้วยสิทธิ์ผู้ดูแลระบบ หรือหัวหน้าภาควิชาฯ เพื่อดูแกนชาร์ต 12 เดือนและส่งอีเมลติดตามโครงการ</p>
+        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">กรุณาเข้าสู่ระบบด้วยสิทธิ์ผู้ดูแลระบบ หรือหัวหน้าภาควิชาฯ เพื่อดูแกนชาร์ตปีงบประมาณไทยและส่งอีเมลติดตามโครงการ</p>
       </div>
 
       <div class="space-y-3 text-xs">
@@ -103,11 +99,11 @@
         <div>
           <div class="flex items-center gap-2">
             <span class="px-2 py-0.5 rounded text-[10px] sm:text-xs font-semibold bg-rose-50 text-rose-600 border border-rose-200 dark:bg-rose-500/20 dark:text-rose-400 dark:border-rose-500/30">
-              ระบบติดตามกำหนดเวลา & แกนต์ชาร์ต 12 เดือน
+              วงรอบปีงบประมาณไทย (ต.ค. - ก.ย.)
             </span>
           </div>
           <h1 class="text-base sm:text-lg md:text-xl font-extrabold tracking-tight bg-gradient-to-r from-rose-600 via-indigo-600 to-purple-600 dark:from-rose-400 dark:via-indigo-300 dark:to-purple-300 bg-clip-text text-transparent">
-            Project Gantt Chart (12 Months)
+            Thai Fiscal Year Gantt Chart
           </h1>
         </div>
       </div>
@@ -184,19 +180,19 @@
       </div>
     </div>
 
-    <!-- ==================== ส่วนแผนภูมิแกนต์ชาร์ต (แกน 12 เดือนเต็ม) ==================== -->
+    <!-- ==================== ส่วนแผนภูมิแกนต์ชาร์ตปีงบประมาณไทย (ต.ค. - ก.ย.) ==================== -->
     <div class="bg-white dark:bg-[#151e32] border border-slate-200 dark:border-slate-800 rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-sm space-y-4">
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 dark:border-slate-800 pb-3">
         <div>
           <h3 class="text-sm sm:text-base ipad:text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
-            <span>📊</span> แผนภูมิแกนต์ชาร์ตแสดงระยะเวลา 12 เดือน (Gantt Chart 12 Months)
+            <span>📊</span> แผนภูมิแกนต์ชาร์ตวงรอบปีงบประมาณไทย (ต.ค. - ก.ย.)
           </h3>
-          <p class="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400">แสดงแผนงานและช่วงเวลาดำเนินโครงการพาดผ่านทั้ง 12 เดือนของปีที่เลือก</p>
+          <p class="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400">แสดงแผนงานเริ่มตั้งแต่เดือนตุลาคมถึงเดือนกันยายนของปีถัดไปตามปีงบประมาณ</p>
         </div>
         
         <!-- ตัวเลือกปีงบประมาณแกนต์ชาร์ต -->
         <div class="flex items-center gap-2 text-xs self-start sm:self-auto">
-          <label class="font-medium text-slate-500 dark:text-slate-400">เลือกปีแสดงแกนต์ชาร์ต:</label>
+          <label class="font-medium text-slate-500 dark:text-slate-400">เลือกปีงบประมาณ:</label>
           <select id="ganttYearSelect" onchange="renderGanttChart()" class="bg-slate-50 dark:bg-[#0b1120] border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-1.5 text-slate-800 dark:text-white outline-none cursor-pointer font-semibold">
             <option value="ALL">ทุกปีงบประมาณ</option>
           </select>
@@ -205,7 +201,7 @@
 
       <!-- พื้นที่แสดงกราฟแกนต์ชาร์ต -->
       <div class="overflow-x-auto touch-scroll custom-scrollbar pb-2">
-        <div class="h-80 sm:h-96 min-w-[700px] sm:min-w-0">
+        <div class="h-80 sm:h-96 min-w-[750px] sm:min-w-0">
           <canvas id="projectGanttChart"></canvas>
         </div>
       </div>
@@ -220,10 +216,16 @@
         <button onclick="resetFilters()" class="text-[11px] text-indigo-600 dark:text-indigo-400 hover:underline">ล้างตัวกรอง</button>
       </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 text-xs">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2.5 text-xs">
         <div>
           <label class="block font-medium text-slate-500 dark:text-slate-400 mb-1">ค้นหาโครงการ/ผู้รับผิดชอบ:</label>
           <input type="text" id="filterKeyword" oninput="applyFilters()" placeholder="พิมพ์คำค้นหา..." class="w-full bg-slate-50 dark:bg-[#0b1120] border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-2 outline-none focus:border-indigo-500">
+        </div>
+        <div>
+          <label class="block font-medium text-slate-500 dark:text-slate-400 mb-1">ปีงบประมาณ:</label>
+          <select id="filterYearSelect" onchange="applyFilters()" class="w-full bg-slate-50 dark:bg-[#0b1120] border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-200 rounded-xl px-3 py-2 outline-none focus:border-indigo-500 cursor-pointer">
+            <option value="ALL">ทุกปีงบประมาณ</option>
+          </select>
         </div>
         <div>
           <label class="block font-medium text-slate-500 dark:text-slate-400 mb-1">ช่วงเวลาความเร่งด่วน:</label>
@@ -573,11 +575,19 @@
     }
 
     function initFilters() {
+      // 1. ฟิลเตอร์ปีงบประมาณ
+      const yearSel = document.getElementById('filterYearSelect');
+      const years = Array.from(new Set(rawProjects.map(p => (p.fiscalYear || '').trim()).filter(Boolean))).sort();
+      yearSel.innerHTML = '<option value="ALL">ทุกปีงบประมาณ</option>';
+      years.forEach(y => { yearSel.innerHTML += `<option value="${y}">ปีงบประมาณ ${y}</option>`; });
+
+      // 2. ผู้รับผิดชอบ
       const ownerSel = document.getElementById('filterOwner');
       const owners = Array.from(new Set(rawProjects.map(p => (p.owner || '').trim()).filter(Boolean))).sort();
       ownerSel.innerHTML = '<option value="ALL">ทุกคน</option>';
       owners.forEach(o => { ownerSel.innerHTML += `<option value="${o}">${o}</option>`; });
 
+      // 3. ประเภทโครงการ
       const catSel = document.getElementById('filterCategory');
       const cats = Array.from(new Set(rawProjects.map(p => (p.category || '').trim()).filter(Boolean))).sort();
       catSel.innerHTML = '<option value="ALL">ทุกประเภท</option>';
@@ -591,7 +601,7 @@
       years.forEach(y => { yearSel.innerHTML += `<option value="${y}">ปีงบประมาณ ${y}</option>`; });
     }
 
-    // ==================== ระบบแกนต์ชาร์ต 12 เดือน (แกนเวลาแบบ Month Series) ====================
+    // ==================== ระบบแกนต์ชาร์ตวงรอบปีงบประมาณไทย (ตุลาคม - กันยายน) ====================
     function renderGanttChart() {
       const canvasEl = document.getElementById('projectGanttChart');
       if (!canvasEl) return;
@@ -604,7 +614,6 @@
         validProjects = validProjects.filter(p => String(p.fiscalYear || '').trim() === selectedYear);
       }
 
-      // จำกัดแสดง 10 โครงการ เพื่อความสะอาด สวยงาม และอ่านง่าย
       validProjects = validProjects.slice(0, 10);
 
       if (validProjects.length === 0) {
@@ -618,22 +627,30 @@
         return title.length > 28 ? title.substring(0, 28) + '...' : title;
       });
 
-      // ชื่อ 12 เดือนมาตรฐานสำหรับแกน X
-      const monthNames = [
-        "ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", 
-        "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."
+      // ชื่อ 12 เดือนเรียงตามปีงบประมาณไทย: เริ่มตุลาคม (ดัชนี 0) ถึง กันยายน (ดัชนี 11)
+      const thaiFiscalMonths = [
+        "ต.ค.", "พ.ย.", "ธ.ค.", "ม.ค.", "ก.พ.", "มี.ค.", 
+        "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย."
       ];
 
-      // คำนวณช่วงเวลาเริ่มต้น (เดือนที่ 0-11) และระยะเวลาเป็นเดือน
+      // ฟังก์ชันแปลงเดือนสากล (0=ม.ค., 9=ต.ค.) ให้เป็นดัชนีปีงบประมาณไทย (0=ต.ค., 3=ม.ค., 11=ก.ย.)
+      function getThaiFiscalMonthIndex(monthNum) {
+        // เดือน 9 (ต.ค.) -> 0, 10 (พ.ย.) -> 1, 11 (ธ.ค.) -> 2, 0 (ม.ค.) -> 3 ... 8 (ก.ย.) -> 11
+        return (monthNum >= 9) ? (monthNum - 9) : (monthNum + 3);
+      }
+
       const chartData = validProjects.map(p => {
         const s = new Date(p.startDate);
-        const startMonth = isNaN(s.getMonth()) ? 0 : s.getMonth(); // 0 = ม.ค.
+        const sMonthNum = isNaN(s.getMonth()) ? 9 : s.getMonth();
+        const thaiStartIndex = getThaiFiscalMonthIndex(sMonthNum);
+
         const e = new Date(p.endDate);
-        const endMonth = isNaN(e.getMonth()) ? startMonth : e.getMonth();
-        
-        const duration = (endMonth - startMonth) >= 0 ? (endMonth - startMonth) + 1 : 1;
+        const eMonthNum = isNaN(e.getMonth()) ? sMonthNum : e.getMonth();
+        const thaiEndIndex = getThaiFiscalMonthIndex(eMonthNum);
+
+        const duration = (thaiEndIndex - thaiStartIndex) >= 0 ? (thaiEndIndex - thaiStartIndex) + 1 : 1;
         return {
-          x: [startMonth, startMonth + duration],
+          x: [thaiStartIndex, thaiStartIndex + duration],
           y: p.title
         };
       });
@@ -654,7 +671,7 @@
         data: {
           labels: labels,
           datasets: [{
-            label: 'ช่วงเวลา 12 เดือน',
+            label: 'วงรอบปีงบประมาณไทย',
             data: chartData,
             backgroundColor: backgroundColors,
             borderRadius: 6,
@@ -691,13 +708,13 @@
               grid: { color: gridColor },
               ticks: {
                 color: textColor,
-                font: { size: 10 },
+                font: { size: 10, weight: '600' },
                 stepSize: 1,
                 callback: function(value) {
-                  return monthNames[value] || '';
+                  return thaiFiscalMonths[value] || '';
                 }
               },
-              title: { display: true, text: 'รอบระยะเวลา 12 เดือน (มกราคม - ธันวาคม)', color: textColor, font: { size: 11, weight: 'bold' } }
+              title: { display: true, text: 'วงรอบปีงบประมาณไทย (ตุลาคม ถึง กันยายนปีถัดไป)', color: textColor, font: { size: 11, weight: 'bold' } }
             },
             y: {
               grid: { color: 'rgba(30, 41, 59, 0.3)' },
@@ -715,6 +732,7 @@
 
     function resetFilters() {
       document.getElementById('filterKeyword').value = '';
+      document.getElementById('filterYearSelect').value = 'ALL';
       document.getElementById('filterUrgency').value = 'ALL';
       document.getElementById('filterOwner').value = 'ALL';
       document.getElementById('filterCategory').value = 'ALL';
@@ -723,6 +741,7 @@
 
     function applyFilters() {
       const keyword = (document.getElementById('filterKeyword').value || '').trim().toLowerCase();
+      const selectedYear = document.getElementById('filterYearSelect').value;
       const urgency = document.getElementById('filterUrgency').value;
       const owner = document.getElementById('filterOwner').value;
       const cat = document.getElementById('filterCategory').value;
@@ -748,11 +767,12 @@
       let filtered = rawProjects.filter(p => {
         const timeStat = calculateTimeStatus(p.startDate, p.endDate, p.status);
 
+        if (selectedYear !== 'ALL' && String(p.fiscalYear || '').trim() !== selectedYear) return false;
         if (urgency === 'OVERDUE' && timeStat.urgency !== 'OVERDUE') return false;
         if (urgency === 'SOON_7' && timeStat.urgency !== 'SOON_7' && timeStat.urgency !== 'TODAY') return false;
-        if (urgency === 'SOON_30' && (timeStat.days === null || timeStat.days < 0 || timeStat.days > 30 || timeStat.urgency === 'COMPLETED')) return false;
-        if (urgency === 'SOON_60' && (timeStat.days === null || timeStat.days < 0 || timeStat.days > 60 || timeStat.urgency === 'COMPLETED')) return false;
-        if (urgency === 'SOON_90' && (timeStat.days === null || timeStat.days < 0 || timeStat.days > 90 || timeStat.urgency === 'COMPLETED')) return false;
+        if (urgency === 'SOON_30' && (timeStat.days === null || timeStat.days < 0 || timeStat.days > 30 || timeStat.urgency !== 'COMPLETED')) return false;
+        if (urgency === 'SOON_60' && (timeStat.days === null || timeStat.days < 0 || timeStat.days > 60 || timeStat.urgency !== 'COMPLETED')) return false;
+        if (urgency === 'SOON_90' && (timeStat.days === null || timeStat.days < 0 || timeStat.days > 90 || timeStat.urgency !== 'COMPLETED')) return false;
         if (urgency === 'ONGOING' && !(p.status || '').includes('ดำเนินงาน')) return false;
 
         if (owner !== 'ALL' && (p.owner || '').trim() !== owner) return false;
@@ -812,7 +832,7 @@
             </td>
             <td class="p-3 text-right">
               <button onclick="openEmailModal('${p.id}')" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-600/20 dark:hover:bg-indigo-600/40 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-500/30 font-medium text-xs transition shadow-sm active:scale-95">
-                <span>✉️️</span>
+                <span>✉️</span>
                 <span>ส่งอีเมลแจ้งเตือน</span>
               </button>
             </td>
