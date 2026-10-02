@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>ระบบติดตามกำหนดการและแจ้งเตือนโครงการ (Admin & Head Only)</title>
+  <title>ระบบติดตามกำหนดการและแผนภูมิแกนต์ชาร์ตโครงการ (Project Gantt Chart & Tracking)</title>
   
   <!-- Tailwind CSS & Chart.js -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -19,6 +19,7 @@
       }
     }
   </script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   
   <!-- Google Font: Prompt -->
@@ -47,7 +48,7 @@
 </head>
 <body class="bg-slate-50 text-slate-800 dark:bg-[#0b1120] dark:text-slate-100 min-h-screen transition-colors duration-300 pb-16">
 
-  <!-- ==================== หน้าต่างเข้าสู่ระบบ (แสดงเมื่อยังไม่ล็อกอิน) ==================== -->
+  <!-- ==================== หน้าต่างเข้าสู่ระบบ (Admin & Head Only) ==================== -->
   <div id="authGateContainer" class="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-md flex items-center justify-center p-4">
     <div class="bg-white/95 dark:bg-[#151e32]/95 backdrop-blur-xl border border-slate-200 dark:border-slate-700 rounded-3xl p-6 sm:p-8 max-w-sm w-full space-y-5 shadow-2xl">
       <div class="text-center">
@@ -55,7 +56,7 @@
           <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
         </div>
         <h2 class="text-lg font-bold text-slate-900 dark:text-white">พื้นที่เฉพาะผู้บริหาร & Admin</h2>
-        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">กรุณาเข้าสู่ระบบด้วยสิทธิ์ผู้ดูแลระบบ หรือหัวหน้าภาควิชาฯ เพื่อดูและส่งอีเมลติดตามโครงการ</p>
+        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">กรุณาเข้าสู่ระบบด้วยสิทธิ์ผู้ดูแลระบบ หรือหัวหน้าภาควิชาฯ เพื่อดูแกนชาร์ตและส่งอีเมลติดตามโครงการ</p>
       </div>
 
       <div class="space-y-3 text-xs">
@@ -98,11 +99,11 @@
         <div>
           <div class="flex items-center gap-2">
             <span class="px-2 py-0.5 rounded text-[10px] sm:text-xs font-semibold bg-rose-50 text-rose-600 border border-rose-200 dark:bg-rose-500/20 dark:text-rose-400 dark:border-rose-500/30">
-              ระบบติดตามกำหนดเวลา & ส่งเมล (Admin & Head)
+              ระบบติดตามกำหนดเวลา & แกนต์ชาร์ต
             </span>
           </div>
           <h1 class="text-base sm:text-lg md:text-xl font-extrabold tracking-tight bg-gradient-to-r from-rose-600 via-indigo-600 to-purple-600 dark:from-rose-400 dark:via-indigo-300 dark:to-purple-300 bg-clip-text text-transparent">
-            Project Timeline & Due Date Tracking
+            Project Gantt Chart & Tracking
           </h1>
         </div>
       </div>
@@ -129,7 +130,7 @@
           รีเฟรช
         </button>
 
-        <button onclick="logoutTracking()" class="bg-rose-50 hover:bg-rose-100 dark:bg-rose-500/10 dark:hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-500/30 text-xs px-3 py-1.5 rounded-xl transition font-medium flex items-center gap-1 active:scale-95" title="ออกจากระบบ">
+        <button onclick="logoutTracking()" class="bg-rose-50 hover:bg-rose-100 dark:bg-rose-500/10 dark:hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-500/30 text-xs px-3 py-1.5 rounded-xl transition font-medium flex items-center gap-1 active:scale-95">
           ออกจากระบบ
         </button>
       </div>
@@ -137,10 +138,10 @@
     </div>
   </header>
 
-  <!-- ==================== Main Content (ซ่อนเมื่อยังไม่ล็อกอิน) ==================== -->
-  <main id="trackingMainContent" class="hidden max-w-7xl mx-auto p-3 sm:p-5 md:p-6 space-y-5 sm:space-y-6">
+  <!-- ==================== Main Content ==================== -->
+  <main id="trackingMainContent" class="hidden max-w-7xl mx-auto p-3 sm:p-5 md:p-6 space-y-5 sm:space-y-7">
 
-    <!-- การ์ดสรุปสถานะการติดตาม (Urgency Cards) -->
+    <!-- การ์ดสรุปสถานะการติดตาม -->
     <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 sm:gap-3.5">
       <div onclick="filterByUrgency('OVERDUE')" class="cursor-pointer bg-white dark:bg-[#151e32] border border-rose-200 dark:border-rose-900/40 rounded-2xl p-3 sm:p-3.5 shadow-sm hover:border-rose-500 transition">
         <span class="text-[11px] font-semibold text-rose-600 dark:text-rose-400 flex items-center gap-1 truncate">🚨 เกินกำหนด</span>
@@ -179,11 +180,44 @@
       </div>
     </div>
 
-    <!-- แผงกรองข้อมูล -->
+    <!-- ==================== ส่วนแผนภูมิแกนต์ชาร์ต (Gantt Chart View) ==================== -->
+    <div class="bg-white dark:bg-[#151e32] border border-slate-200 dark:border-slate-800 rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-sm space-y-4">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 dark:border-slate-800 pb-3">
+        <div>
+          <h3 class="text-sm sm:text-base ipad:text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            <span>📊</span> แผนภูมิแกนต์ชาร์ตระยะเวลาโครงการ (Gantt Chart Timeline)
+          </h3>
+          <p class="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400">แสดงช่วงเวลาการดำเนินโครงการในรูปแบบไทม์ไลน์</p>
+        </div>
+        
+        <!-- ปุ่มสลับมุมมอง รายเดือน / รายปี -->
+        <div class="flex items-center gap-1.5 bg-slate-100 dark:bg-[#0b1120] p-1 rounded-xl border border-slate-300 dark:border-slate-700 self-start sm:self-auto">
+          <button onclick="setGanttMode('MONTH')" id="btnGanttMonth" class="px-3 py-1 rounded-lg text-xs font-semibold transition bg-indigo-600 text-white shadow-sm">ดูรายเดือน</button>
+          <button onclick="setGanttMode('YEAR')" id="btnGanttYear" class="px-3 py-1 rounded-lg text-xs font-semibold transition text-slate-600 dark:text-slate-300 hover:text-white">ดูรายปี</button>
+        </div>
+      </div>
+
+      <!-- ตัวกรองย่อยสำหรับเลือกปีในแกนต์ชาร์ต -->
+      <div class="flex items-center gap-2 text-xs">
+        <label class="font-medium text-slate-500 dark:text-slate-400">เลือกปีแสดงแกนต์ชาร์ต:</label>
+        <select id="ganttYearSelect" onchange="renderGanttChart()" class="bg-slate-50 dark:bg-[#0b1120] border border-slate-300 dark:border-slate-700 rounded-lg px-2.5 py-1 text-slate-800 dark:text-white outline-none cursor-pointer">
+          <option value="ALL">ทุกปีงบประมาณ</option>
+        </select>
+      </div>
+
+      <!-- พื้นที่แสดงกราฟแกนต์ชาร์ต -->
+      <div class="overflow-x-auto touch-scroll custom-scrollbar pb-2">
+        <div id="ganttChartWrapper" class="h-80 sm:h-96 min-w-[650px] sm:min-w-0">
+          <canvas id="projectGanttChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- แผงกรองข้อมูลตาราง -->
     <div class="bg-white dark:bg-[#151e32] border border-slate-200 dark:border-slate-800 rounded-2xl p-3.5 sm:p-4 shadow-sm space-y-3">
       <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-2">
         <h3 class="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
-          <span>🎯</span> ตัวกรองการติดตาม (Tracking Filters)
+          <span>🎯</span> ตัวกรองตารางการติดตาม (Tracking Filters)
         </h3>
         <button onclick="resetFilters()" class="text-[11px] text-indigo-600 dark:text-indigo-400 hover:underline">ล้างตัวกรอง</button>
       </div>
@@ -225,7 +259,7 @@
       <div class="flex items-center justify-between">
         <div>
           <h3 class="text-sm sm:text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
-            <span>⏱️</span> รายการโครงการและสถานะกำหนดการ
+            <span>⏱️️</span> รายการโครงการและสถานะกำหนดการ
           </h3>
           <p class="text-[11px] text-slate-500 dark:text-slate-400">ตรวจสอบวันเริ่ม-สิ้นสุด และกดส่งอีเมลแจ้งเตือนถึงผู้รับผิดชอบได้โดยตรง</p>
         </div>
@@ -290,14 +324,15 @@
   </div>
 
   <script>
-    // URL Web App จาก Google Apps Script
+    // API URL ตามที่คุณระบุ
     const API_URL = "https://script.google.com/macros/s/AKfycbyNp21A2LfvHrKyPUP2Olfa1BLSAV5Hwmr2J_SenNfmaiKhAoEz_y5EibDGq_qic9Ch/exec";
 
     let rawProjects = [];
     let rawUsers = [];
     let currentAdminUser = null;
+    let ganttChartInstance = null;
+    let currentGanttMode = 'MONTH'; // MONTH หรือ YEAR
 
-    // ตรวจสอบสิทธิ์ Admin หรือ หัวหน้าภาควิชาฯ
     function isAuthorizedRole(user) {
       if (!user) return false;
       const role = String(user.role || '');
@@ -334,7 +369,6 @@
       document.getElementById('authGateContainer').classList.remove('flex');
       document.getElementById('trackingMainContent').classList.remove('hidden');
 
-      // แสดงชื่อผู้ใช้บน Header
       if (currentAdminUser) {
         document.getElementById('headerUserName').innerText = currentAdminUser.name || currentAdminUser.username;
         document.getElementById('headerUserRole').innerText = currentAdminUser.role || 'Admin/Head';
@@ -441,6 +475,7 @@
         localStorage.setItem('theme', 'dark');
         updateThemeUI('dark');
       }
+      renderGanttChart();
     }
 
     function updateThemeUI(theme) {
@@ -530,6 +565,8 @@
           rawUsers = data.users || [];
           statusText.innerText = 'ข้อมูลล่าสุด';
           initFilters();
+          initGanttYearDropdown();
+          renderGanttChart();
           applyFilters();
         } else {
           statusText.innerText = 'โหลดไม่สำเร็จ';
@@ -549,6 +586,127 @@
       const cats = Array.from(new Set(rawProjects.map(p => (p.category || '').trim()).filter(Boolean))).sort();
       catSel.innerHTML = '<option value="ALL">ทุกประเภท</option>';
       cats.forEach(c => { catSel.innerHTML += `<option value="${c}">${c}</option>`; });
+    }
+
+    function initGanttYearDropdown() {
+      const yearSel = document.getElementById('ganttYearSelect');
+      const years = Array.from(new Set(rawProjects.map(p => (p.fiscalYear || '').trim()).filter(Boolean))).sort();
+      yearSel.innerHTML = '<option value="ALL">ทุกปีงบประมาณ</option>';
+      years.forEach(y => { yearSel.innerHTML += `<option value="${y}">ปีงบประมาณ ${y}</option>`; });
+    }
+
+    // ==================== ระบบ Gantt Chart (รายเดือน / รายปี) ====================
+    function setGanttMode(mode) {
+      currentGanttMode = mode;
+      const btnMonth = document.getElementById('btnGanttMonth');
+      const btnYear = document.getElementById('btnGanttYear');
+
+      if (mode === 'MONTH') {
+        btnMonth.className = "px-3 py-1 rounded-lg text-xs font-semibold transition bg-indigo-600 text-white shadow-sm";
+        btnYear.className = "px-3 py-1 rounded-lg text-xs font-semibold transition text-slate-600 dark:text-slate-300 hover:text-white";
+      } else {
+        btnYear.className = "px-3 py-1 rounded-lg text-xs font-semibold transition bg-indigo-600 text-white shadow-sm";
+        btnMonth.className = "px-3 py-1 rounded-lg text-xs font-semibold transition text-slate-600 dark:text-slate-300 hover:text-white";
+      }
+      renderGanttChart();
+    }
+
+    function renderGanttChart() {
+      const canvasEl = document.getElementById('projectGanttChart');
+      if (!canvasEl) return;
+      const ctx = canvasEl.getContext('2d');
+
+      const selectedYear = document.getElementById('ganttYearSelect').value;
+      let validProjects = rawProjects.filter(p => p.startDate && p.endDate);
+
+      if (selectedYear !== 'ALL') {
+        validProjects = validProjects.filter(p => String(p.fiscalYear || '').trim() === selectedYear);
+      }
+
+      // จำกัดแสดงสูงสุด 12 โครงการ เพื่อให้กราฟอ่านง่ายไม่แน่นเกินไป
+      validProjects = validProjects.slice(0, 12);
+
+      if (validProjects.length === 0) {
+        if (ganttChartInstance) ganttChartInstance.destroy();
+        ctx.clearRect(0, 0, canvasEl.width, canvasEl.height);
+        return;
+      }
+
+      const labels = validProjects.map(p => {
+        const title = p.title || 'ไม่มีชื่อโครงการ';
+        return title.length > 30 ? title.substring(0, 30) + '...' : title;
+      });
+
+      // แปลงข้อมูลเป็นช่วงเวลาสำหรับ Chart.js (Floating Bar Chart)
+      const dataPoints = validProjects.map(p => {
+        const start = new Date(p.startDate).getTime();
+        const end = new Date(p.endDate).getTime();
+        return [start, end > start ? end : start + 86400000];
+      });
+
+      const isDark = document.documentElement.classList.contains('dark');
+      const textColor = isDark ? '#94a3b8' : '#475569';
+      const gridColor = isDark ? '#1e293b' : '#e2e8f0';
+
+      if (ganttChartInstance) {
+        ganttChartInstance.destroy();
+      }
+
+      ganttChartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'ช่วงเวลาดำเนินโครงการ',
+            data: dataPoints,
+            backgroundColor: '#6366f1',
+            borderRadius: 6,
+            borderSkipped: false
+          }]
+        },
+        options: {
+          indexAxis: 'y',
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                title: function(context) {
+                  return validProjects[context[0].dataIndex].title;
+                },
+                label: function(context) {
+                  const p = validProjects[context.dataIndex];
+                  return [
+                    ` 👤 ผู้รับผิดชอบ: ${p.owner || '-'}`,
+                    ` 🗓️ เริ่ม: ${formatThaiDate(p.startDate)}`,
+                    ` 🏁 สิ้นสุด: ${formatThaiDate(p.endDate)}`
+                  ];
+                }
+              }
+            }
+          },
+          scales: {
+            x: {
+              type: 'time',
+              time: {
+                unit: currentGanttMode === 'MONTH' ? 'month' : 'year',
+                tooltipFormat: 'DD MMM YYYY',
+                displayFormats: {
+                  month: 'MMM YYYY',
+                  year: 'YYYY'
+                }
+              },
+              grid: { color: gridColor },
+              ticks: { color: textColor, font: { size: 10 } }
+            },
+            y: {
+              grid: { color: 'rgba(30, 41, 59, 0.3)' },
+              ticks: { color: isDark ? '#f1f5f9' : '#1e293b', font: { size: 11, weight: '500' } }
+            }
+          }
+        }
+      });
     }
 
     function filterByUrgency(urgencyType) {
@@ -743,5 +901,7 @@
       checkAuthentication();
     });
   </script>
+  <!-- Chart.js Adapter Date (จำเป็นสำหรับแกนต์ชาร์ตเวลา) -->
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
 </body>
 </html>
