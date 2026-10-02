@@ -91,30 +91,48 @@
   <!-- ==================== Main Content ==================== -->
   <main class="max-w-7xl mx-auto p-3 sm:p-5 md:p-6 space-y-5 sm:space-y-6">
 
-    <!-- การ์ดสรุปสถานะการติดตาม (Urgency Cards) -->
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-      <div onclick="filterByUrgency('OVERDUE')" class="cursor-pointer bg-white dark:bg-[#151e32] border border-rose-200 dark:border-rose-900/40 rounded-2xl p-3.5 sm:p-4 shadow-sm hover:border-rose-500 transition">
-        <span class="text-[11px] font-semibold text-rose-600 dark:text-rose-400 flex items-center gap-1">🚨 เกินกำหนดแล้ว</span>
-        <h3 id="statOverdue" class="text-xl sm:text-2xl font-bold text-rose-600 dark:text-rose-400 mt-1">0</h3>
-        <p class="text-[10px] text-slate-400 mt-0.5">สิ้นสุดแล้วแต่ยังไม่เสร็จสิ้น</p>
+    <!-- การ์ดสรุปสถานะการติดตาม (เพิ่ม 2 เดือน และ 3 เดือน) -->
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 sm:gap-3.5">
+      <!-- 1. เกินกำหนด -->
+      <div onclick="filterByUrgency('OVERDUE')" class="cursor-pointer bg-white dark:bg-[#151e32] border border-rose-200 dark:border-rose-900/40 rounded-2xl p-3 sm:p-3.5 shadow-sm hover:border-rose-500 transition">
+        <span class="text-[11px] font-semibold text-rose-600 dark:text-rose-400 flex items-center gap-1 truncate">🚨 เกินกำหนด</span>
+        <h3 id="statOverdue" class="text-lg sm:text-2xl font-bold text-rose-600 dark:text-rose-400 mt-1">0</h3>
+        <p class="text-[10px] text-slate-400 mt-0.5 truncate">สิ้นสุดแล้ว</p>
       </div>
 
-      <div onclick="filterByUrgency('SOON_7')" class="cursor-pointer bg-white dark:bg-[#151e32] border border-amber-200 dark:border-amber-900/40 rounded-2xl p-3.5 sm:p-4 shadow-sm hover:border-amber-500 transition">
-        <span class="text-[11px] font-semibold text-amber-600 dark:text-amber-400 flex items-center gap-1">⏰ ภายใน 7 วันนี้</span>
-        <h3 id="statSoon7" class="text-xl sm:text-2xl font-bold text-amber-600 dark:text-amber-400 mt-1">0</h3>
-        <p class="text-[10px] text-slate-400 mt-0.5">ใกล้ถึงวันเริ่ม/สิ้นสุด</p>
+      <!-- 2. ภายใน 7 วัน -->
+      <div onclick="filterByUrgency('SOON_7')" class="cursor-pointer bg-white dark:bg-[#151e32] border border-amber-200 dark:border-amber-900/40 rounded-2xl p-3 sm:p-3.5 shadow-sm hover:border-amber-500 transition">
+        <span class="text-[11px] font-semibold text-amber-600 dark:text-amber-400 flex items-center gap-1 truncate">⏰ ภายใน 7 วัน</span>
+        <h3 id="statSoon7" class="text-lg sm:text-2xl font-bold text-amber-600 dark:text-amber-400 mt-1">0</h3>
+        <p class="text-[10px] text-slate-400 mt-0.5 truncate">ใกล้ถึงวันจัด</p>
       </div>
 
-      <div onclick="filterByUrgency('SOON_30')" class="cursor-pointer bg-white dark:bg-[#151e32] border border-sky-200 dark:border-sky-900/40 rounded-2xl p-3.5 sm:p-4 shadow-sm hover:border-sky-500 transition">
-        <span class="text-[11px] font-semibold text-sky-600 dark:text-sky-400 flex items-center gap-1">🗓️ ภายใน 30 วัน</span>
-        <h3 id="statSoon30" class="text-xl sm:text-2xl font-bold text-sky-600 dark:text-sky-400 mt-1">0</h3>
-        <p class="text-[10px] text-slate-400 mt-0.5">มีแผนจัดในเดือนนี้</p>
+      <!-- 3. ภายใน 30 วัน (1 เดือน) -->
+      <div onclick="filterByUrgency('SOON_30')" class="cursor-pointer bg-white dark:bg-[#151e32] border border-sky-200 dark:border-sky-900/40 rounded-2xl p-3 sm:p-3.5 shadow-sm hover:border-sky-500 transition">
+        <span class="text-[11px] font-semibold text-sky-600 dark:text-sky-400 flex items-center gap-1 truncate">🗓️ ภายใน 1 เดือน</span>
+        <h3 id="statSoon30" class="text-lg sm:text-2xl font-bold text-sky-600 dark:text-sky-400 mt-1">0</h3>
+        <p class="text-[10px] text-slate-400 mt-0.5 truncate">ไม่เกิน 30 วัน</p>
       </div>
 
-      <div onclick="filterByUrgency('ALL')" class="cursor-pointer bg-white dark:bg-[#151e32] border border-slate-200 dark:border-slate-800 rounded-2xl p-3.5 sm:p-4 shadow-sm hover:border-indigo-500 transition">
-        <span class="text-[11px] font-semibold text-indigo-600 dark:text-indigo-400 flex items-center gap-1">📋 โครงการทั้งหมด</span>
-        <h3 id="statAll" class="text-xl sm:text-2xl font-bold text-slate-800 dark:text-white mt-1">0</h3>
-        <p class="text-[10px] text-slate-400 mt-0.5">คลิกเพื่อดูทั้งหมด</p>
+      <!-- 4. ภายใน 60 วัน (2 เดือน) [ใหม่] -->
+      <div onclick="filterByUrgency('SOON_60')" class="cursor-pointer bg-white dark:bg-[#151e32] border border-teal-200 dark:border-teal-900/40 rounded-2xl p-3 sm:p-3.5 shadow-sm hover:border-teal-500 transition">
+        <span class="text-[11px] font-semibold text-teal-600 dark:text-teal-400 flex items-center gap-1 truncate">⏳ ภายใน 2 เดือน</span>
+        <h3 id="statSoon60" class="text-lg sm:text-2xl font-bold text-teal-600 dark:text-teal-400 mt-1">0</h3>
+        <p class="text-[10px] text-slate-400 mt-0.5 truncate">ไม่เกิน 60 วัน</p>
+      </div>
+
+      <!-- 5. ภายใน 90 วัน (3 เดือน) [ใหม่] -->
+      <div onclick="filterByUrgency('SOON_90')" class="cursor-pointer bg-white dark:bg-[#151e32] border border-purple-200 dark:border-purple-900/40 rounded-2xl p-3 sm:p-3.5 shadow-sm hover:border-purple-500 transition">
+        <span class="text-[11px] font-semibold text-purple-600 dark:text-purple-400 flex items-center gap-1 truncate">📅 ภายใน 3 เดือน</span>
+        <h3 id="statSoon90" class="text-lg sm:text-2xl font-bold text-purple-600 dark:text-purple-400 mt-1">0</h3>
+        <p class="text-[10px] text-slate-400 mt-0.5 truncate">ไม่เกิน 90 วัน</p>
+      </div>
+
+      <!-- 6. ทั้งหมด -->
+      <div onclick="filterByUrgency('ALL')" class="cursor-pointer bg-white dark:bg-[#151e32] border border-slate-200 dark:border-slate-800 rounded-2xl p-3 sm:p-3.5 shadow-sm hover:border-indigo-500 transition">
+        <span class="text-[11px] font-semibold text-indigo-600 dark:text-indigo-400 flex items-center gap-1 truncate">📋 ทั้งหมด</span>
+        <h3 id="statAll" class="text-lg sm:text-2xl font-bold text-slate-800 dark:text-white mt-1">0</h3>
+        <p class="text-[10px] text-slate-400 mt-0.5 truncate">ดูทุกโครงการ</p>
       </div>
     </div>
 
@@ -133,12 +151,14 @@
           <input type="text" id="filterKeyword" oninput="applyFilters()" placeholder="พิมพ์คำค้นหา..." class="w-full bg-slate-50 dark:bg-[#0b1120] border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-2 outline-none focus:border-indigo-500">
         </div>
         <div>
-          <label class="block font-medium text-slate-500 dark:text-slate-400 mb-1">ความเร่งด่วน:</label>
+          <label class="block font-medium text-slate-500 dark:text-slate-400 mb-1">ช่วงเวลาความเร่งด่วน:</label>
           <select id="filterUrgency" onchange="applyFilters()" class="w-full bg-slate-50 dark:bg-[#0b1120] border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-2 outline-none focus:border-indigo-500 cursor-pointer">
             <option value="ALL">ทุกโครงการ</option>
-            <option value="OVERDUE">🚨 เกินกำหนด (Overdue)</option>
-            <option value="SOON_7">⏰ ภายใน 7 วัน</option>
-            <option value="SOON_30">🗓️ ภายใน 30 วัน</option>
+            <option value="OVERDUE">🚨 เกินกำหนดแล้ว (Overdue)</option>
+            <option value="SOON_7">⏰ ภายใน 7 วันนี้</option>
+            <option value="SOON_30">🗓️ ภายใน 1 เดือน (30 วัน)</option>
+            <option value="SOON_60">⏳ ภายใน 2 เดือน (60 วัน)</option>
+            <option value="SOON_90">📅 ภายใน 3 เดือน (90 วัน)</option>
             <option value="ONGOING">⚙️ กำลังดำเนินงาน</option>
           </select>
         </div>
@@ -227,7 +247,8 @@
   </div>
 
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbzVx_tahKJQ4sMoozQ_wHelWNn7o_BTSJuYf3QCp9HP9q1bN1u-T70Slqn6iaGaEuClLg/exec";
+    // URL Web App จาก Google Apps Script (ใส่ URL ของคุณ)
+    const API_URL = "https://script.google.com/macros/s/AKfycbyLx3HwFedlTJytc2LzL-t5IP0gp4aNrq-NxT6ZRCnfds--LmWjUKeJQAh0R8vutlOehQ/exec";
 
     let rawProjects = [];
     let rawUsers = [];
@@ -286,7 +307,7 @@
       return `${d.getDate()} ${mThai[d.getMonth()]} ${d.getFullYear() + 543}`;
     }
 
-    // คำนวณวันคงเหลือ / สถานะกำหนดการ
+    // คำนวณวันคงเหลือ รองรับ 7 วัน, 30 วัน (1 เดือน), 60 วัน (2 เดือน), 90 วัน (3 เดือน)
     function calculateTimeStatus(startDateStr, endDateStr, statusStr) {
       const now = new Date();
       now.setHours(0, 0, 0, 0);
@@ -314,9 +335,13 @@
       } else if (diffDays === 0) {
         return { label: 'ครบกำหนดวันนี้!', days: 0, urgency: 'TODAY', badgeClass: 'bg-amber-50 text-amber-600 border border-amber-200 dark:bg-amber-500/20 dark:text-amber-400 dark:border-amber-500/30 font-bold' };
       } else if (diffDays <= 7) {
-        return { label: `อีก ${diffDays} วัน`, days: diffDays, urgency: 'SOON_7', badgeClass: 'bg-amber-50 text-amber-700 border border-amber-200 dark:bg-amber-500/10 dark:text-amber-400 font-semibold' };
+        return { label: `อีก ${diffDays} วัน (ด่วน)`, days: diffDays, urgency: 'SOON_7', badgeClass: 'bg-amber-50 text-amber-700 border border-amber-200 dark:bg-amber-500/10 dark:text-amber-400 font-semibold' };
       } else if (diffDays <= 30) {
-        return { label: `อีก ${diffDays} วัน`, days: diffDays, urgency: 'SOON_30', badgeClass: 'bg-sky-50 text-sky-700 border border-sky-200 dark:bg-sky-500/10 dark:text-sky-400 font-medium' };
+        return { label: `อีก ${diffDays} วัน (~1 เดือน)`, days: diffDays, urgency: 'SOON_30', badgeClass: 'bg-sky-50 text-sky-700 border border-sky-200 dark:bg-sky-500/10 dark:text-sky-400 font-medium' };
+      } else if (diffDays <= 60) {
+        return { label: `อีก ${diffDays} วัน (~2 เดือน)`, days: diffDays, urgency: 'SOON_60', badgeClass: 'bg-teal-50 text-teal-700 border border-teal-200 dark:bg-teal-500/10 dark:text-teal-400 font-medium' };
+      } else if (diffDays <= 90) {
+        return { label: `อีก ${diffDays} วัน (~3 เดือน)`, days: diffDays, urgency: 'SOON_90', badgeClass: 'bg-purple-50 text-purple-700 border border-purple-200 dark:bg-purple-500/10 dark:text-purple-400 font-medium' };
       } else {
         return { label: `อีก ${diffDays} วัน`, days: diffDays, urgency: 'NORMAL', badgeClass: 'bg-indigo-50 text-indigo-700 border border-indigo-200 dark:bg-indigo-500/10 dark:text-indigo-400' };
       }
@@ -377,28 +402,34 @@
       const owner = document.getElementById('filterOwner').value;
       const cat = document.getElementById('filterCategory').value;
 
-      let overdueCount = 0, soon7Count = 0, soon30Count = 0;
+      let overdueCount = 0, soon7Count = 0, soon30Count = 0, soon60Count = 0, soon90Count = 0;
 
-      // คำนวณสถานะภาพรวมของการ์ดสถิติ
+      // คำนวณยอดนับในการ์ดสถิติ
       rawProjects.forEach(p => {
         const timeStat = calculateTimeStatus(p.startDate, p.endDate, p.status);
         if (timeStat.urgency === 'OVERDUE') overdueCount++;
         if (timeStat.urgency === 'SOON_7' || timeStat.urgency === 'TODAY') soon7Count++;
         if (timeStat.days !== null && timeStat.days >= 0 && timeStat.days <= 30 && timeStat.urgency !== 'COMPLETED') soon30Count++;
+        if (timeStat.days !== null && timeStat.days >= 0 && timeStat.days <= 60 && timeStat.urgency !== 'COMPLETED') soon60Count++;
+        if (timeStat.days !== null && timeStat.days >= 0 && timeStat.days <= 90 && timeStat.urgency !== 'COMPLETED') soon90Count++;
       });
 
       document.getElementById('statOverdue').innerText = overdueCount;
       document.getElementById('statSoon7').innerText = soon7Count;
       document.getElementById('statSoon30').innerText = soon30Count;
+      document.getElementById('statSoon60').innerText = soon60Count;
+      document.getElementById('statSoon90').innerText = soon90Count;
       document.getElementById('statAll').innerText = rawProjects.length;
 
-      // กรองตามเงื่อนไขที่เลือก
+      // กรองตามเงื่อนไข
       let filtered = rawProjects.filter(p => {
         const timeStat = calculateTimeStatus(p.startDate, p.endDate, p.status);
 
         if (urgency === 'OVERDUE' && timeStat.urgency !== 'OVERDUE') return false;
         if (urgency === 'SOON_7' && timeStat.urgency !== 'SOON_7' && timeStat.urgency !== 'TODAY') return false;
         if (urgency === 'SOON_30' && (timeStat.days === null || timeStat.days < 0 || timeStat.days > 30 || timeStat.urgency === 'COMPLETED')) return false;
+        if (urgency === 'SOON_60' && (timeStat.days === null || timeStat.days < 0 || timeStat.days > 60 || timeStat.urgency === 'COMPLETED')) return false;
+        if (urgency === 'SOON_90' && (timeStat.days === null || timeStat.days < 0 || timeStat.days > 90 || timeStat.urgency === 'COMPLETED')) return false;
         if (urgency === 'ONGOING' && !(p.status || '').includes('ดำเนินงาน')) return false;
 
         if (owner !== 'ALL' && (p.owner || '').trim() !== owner) return false;
@@ -473,7 +504,6 @@
       return user ? user.email : '';
     }
 
-    // Modal ส่งอีเมล
     function openEmailModal(projectId) {
       const p = rawProjects.find(item => String(item.id) === String(projectId));
       if (!p) return;
