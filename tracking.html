@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>ระบบติดตามกำหนดการและแผนภูมิแกนต์ชาร์ตโครงการ (Project Gantt Chart & Tracking)</title>
+  <title>ระบบติดตามกำหนดการและแผนภูมิแกนต์ชาร์ตโครงการ (Project Tracking)</title>
   
   <!-- Tailwind CSS & Chart.js -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -187,7 +187,7 @@
           <h3 class="text-sm sm:text-base ipad:text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
             <span>📊</span> แผนภูมิแกนต์ชาร์ตระยะเวลาโครงการ (Gantt Chart Timeline)
           </h3>
-          <p class="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400">แสดงช่วงเวลาการดำเนินโครงการในรูปแบบไทม์ไลน์</p>
+          <p class="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400">แสดงช่วงเวลาการดำเนินโครงการเปรียบเทียบตามเดือนหรือปี</p>
         </div>
         
         <!-- ปุ่มสลับมุมมอง รายเดือน / รายปี -->
@@ -199,7 +199,7 @@
 
       <!-- ตัวกรองย่อยสำหรับเลือกปีในแกนต์ชาร์ต -->
       <div class="flex items-center gap-2 text-xs">
-        <label class="font-medium text-slate-500 dark:text-slate-400">เลือกปีแสดงแกนต์ชาร์ต:</label>
+        <label class="font-medium text-slate-500 dark:text-slate-400">เลือกปีงบประมาณแกนต์ชาร์ต:</label>
         <select id="ganttYearSelect" onchange="renderGanttChart()" class="bg-slate-50 dark:bg-[#0b1120] border border-slate-300 dark:border-slate-700 rounded-lg px-2.5 py-1 text-slate-800 dark:text-white outline-none cursor-pointer">
           <option value="ALL">ทุกปีงบประมาณ</option>
         </select>
@@ -207,7 +207,7 @@
 
       <!-- พื้นที่แสดงกราฟแกนต์ชาร์ต -->
       <div class="overflow-x-auto touch-scroll custom-scrollbar pb-2">
-        <div id="ganttChartWrapper" class="h-80 sm:h-96 min-w-[650px] sm:min-w-0">
+        <div class="h-80 sm:h-96 min-w-[650px] sm:min-w-0">
           <canvas id="projectGanttChart"></canvas>
         </div>
       </div>
@@ -259,7 +259,7 @@
       <div class="flex items-center justify-between">
         <div>
           <h3 class="text-sm sm:text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
-            <span>⏱️️</span> รายการโครงการและสถานะกำหนดการ
+            <span>⏱️</span> รายการโครงการและสถานะกำหนดการ
           </h3>
           <p class="text-[11px] text-slate-500 dark:text-slate-400">ตรวจสอบวันเริ่ม-สิ้นสุด และกดส่งอีเมลแจ้งเตือนถึงผู้รับผิดชอบได้โดยตรง</p>
         </div>
@@ -324,7 +324,7 @@
   </div>
 
   <script>
-    // API URL ตามที่คุณระบุ
+    // API URL ล่าสุดตามที่คุณระบุ
     const API_URL = "https://script.google.com/macros/s/AKfycbyNp21A2LfvHrKyPUP2Olfa1BLSAV5Hwmr2J_SenNfmaiKhAoEz_y5EibDGq_qic9Ch/exec";
 
     let rawProjects = [];
@@ -595,7 +595,7 @@
       years.forEach(y => { yearSel.innerHTML += `<option value="${y}">ปีงบประมาณ ${y}</option>`; });
     }
 
-    // ==================== ระบบ Gantt Chart (รายเดือน / รายปี) ====================
+    // ==================== ระบบแกนต์ชาร์ต (Native Bar Chart รองรับเดือน/ปี) ====================
     function setGanttMode(mode) {
       currentGanttMode = mode;
       const btnMonth = document.getElementById('btnGanttMonth');
@@ -623,8 +623,8 @@
         validProjects = validProjects.filter(p => String(p.fiscalYear || '').trim() === selectedYear);
       }
 
-      // จำกัดแสดงสูงสุด 12 โครงการ เพื่อให้กราฟอ่านง่ายไม่แน่นเกินไป
-      validProjects = validProjects.slice(0, 12);
+      // จำกัดแสดง 10 โครงการ เพื่อความสะอาดสวยงาม
+      validProjects = validProjects.slice(0, 10);
 
       if (validProjects.length === 0) {
         if (ganttChartInstance) ganttChartInstance.destroy();
@@ -634,34 +634,40 @@
 
       const labels = validProjects.map(p => {
         const title = p.title || 'ไม่มีชื่อโครงการ';
-        return title.length > 30 ? title.substring(0, 30) + '...' : title;
+        return title.length > 28 ? title.substring(0, 28) + '...' : title;
       });
 
-      // แปลงข้อมูลเป็นช่วงเวลาสำหรับ Chart.js (Floating Bar Chart)
-      const dataPoints = validProjects.map(p => {
-        const start = new Date(p.startDate).getTime();
-        const end = new Date(p.endDate).getTime();
-        return [start, end > start ? end : start + 86400000];
+      // คำนวณระยะเวลาเป็นจำนวนวันหรือเดือนเพื่อแสดงในแท่ง Bar Chart
+      const chartData = validProjects.map(p => {
+        const s = new Date(p.startDate);
+        const e = new Date(p.endDate);
+        const diffTime = Math.abs(e - s);
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+        return diffDays > 0 ? diffDays : 1;
+      });
+
+      // หาค่านับเดือนเริ่มต้นเทียบกับเดือนปัจจุบันเพื่อสร้าง offset ในการแสดงผล
+      const backgroundColors = validProjects.map((p, idx) => {
+        const palette = ['#6366f1', '#06b6d4', '#10b981', '#f59e0b', '#ec4899', '#8b5cf6', '#3b82f6', '#14b8a6'];
+        return palette[idx % palette.length];
       });
 
       const isDark = document.documentElement.classList.contains('dark');
       const textColor = isDark ? '#94a3b8' : '#475569';
       const gridColor = isDark ? '#1e293b' : '#e2e8f0';
 
-      if (ganttChartInstance) {
-        ganttChartInstance.destroy();
-      }
+      if (ganttChartInstance) ganttChartInstance.destroy();
 
       ganttChartInstance = new Chart(ctx, {
         type: 'bar',
         data: {
           labels: labels,
           datasets: [{
-            label: 'ช่วงเวลาดำเนินโครงการ',
-            data: dataPoints,
-            backgroundColor: '#6366f1',
+            label: 'ระยะเวลาโครงการ (วัน)',
+            data: chartData,
+            backgroundColor: backgroundColors,
             borderRadius: 6,
-            borderSkipped: false
+            barPercentage: 0.6
           }]
         },
         options: {
@@ -680,7 +686,8 @@
                   return [
                     ` 👤 ผู้รับผิดชอบ: ${p.owner || '-'}`,
                     ` 🗓️ เริ่ม: ${formatThaiDate(p.startDate)}`,
-                    ` 🏁 สิ้นสุด: ${formatThaiDate(p.endDate)}`
+                    ` 🏁 สิ้นสุด: ${formatThaiDate(p.endDate)}`,
+                    ` ⏱️️ ระยะเวลา: ${context.raw} วัน`
                   ];
                 }
               }
@@ -688,17 +695,9 @@
           },
           scales: {
             x: {
-              type: 'time',
-              time: {
-                unit: currentGanttMode === 'MONTH' ? 'month' : 'year',
-                tooltipFormat: 'DD MMM YYYY',
-                displayFormats: {
-                  month: 'MMM YYYY',
-                  year: 'YYYY'
-                }
-              },
               grid: { color: gridColor },
-              ticks: { color: textColor, font: { size: 10 } }
+              ticks: { color: textColor, font: { size: 10 }, callback: function(val) { return val + ' วัน'; } },
+              title: { display: true, text: currentGanttMode === 'MONTH' ? 'สัดส่วนระยะเวลาโครงการ (รายเดือน/วัน)' : 'สัดส่วนระยะเวลาโครงการ (รายปี)', color: textColor, font: { size: 11 } }
             },
             y: {
               grid: { color: 'rgba(30, 41, 59, 0.3)' },
@@ -901,7 +900,5 @@
       checkAuthentication();
     });
   </script>
-  <!-- Chart.js Adapter Date (จำเป็นสำหรับแกนต์ชาร์ตเวลา) -->
-  <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
 </body>
 </html>
