@@ -138,8 +138,11 @@
 
     <!-- ส่วนที่ 1: การ์ดงบประมาณแยกตามปี -->
     <div>
-      <div class="flex items-center justify-between mb-2.5">
-        <h2 class="text-xs sm:text-sm font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider">📊 งบประมาณจัดสรรรวมจำแนกตามปีงบประมาณ</h2>
+      <div class="flex items-center justify-between mb-2.5 gap-2">
+        <div>
+          <h2 class="text-xs sm:text-sm font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider">📊 งบประมาณจัดสรรรวมจำแนกตามปีงบประมาณ</h2>
+          <p class="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5">ยอดคงเหลือ = งบจัดสรรตามแผน − งบที่อนุมัติ · แถบความคืบหน้า: 🟢 อนุมัติ 🟡 เบิกจ่าย</p>
+        </div>
         <div class="flex items-center gap-2">
           <button id="btnCardAddFiscalYear" onclick="openFiscalYearModal()" class="hidden bg-amber-50 dark:bg-amber-500/20 hover:bg-amber-100 dark:hover:bg-amber-500/30 text-amber-700 dark:text-amber-300 border border-amber-300 dark:border-amber-500/30 px-2.5 py-0.5 rounded-lg text-[11px] font-medium transition items-center gap-1 shadow-sm">
             <span>+</span> เพิ่มปีงบฯ
@@ -925,12 +928,46 @@
   // ★ ชุดสีประจำผู้รับผิดชอบ (16 สี แยกชัด อ่านง่ายทั้งโหมดสว่าง/มืด)
   const OWNER_PALETTE = ['#6366f1','#f59e0b','#10b981','#ec4899','#0ea5e9','#a855f7','#f43f5e','#14b8a6','#eab308','#8b5cf6','#3b82f6','#22c55e','#fb923c','#06b6d4','#d946ef','#84cc16'];
 
-  // ★ กำหนดสีประจำบุคคลจากการ hash ชื่อ — สีคงที่เสมอ ไม่เปลี่ยนตามการกรอง/เรียงลำดับ
+  // ★ ระบบสีประจำผู้รับผิดชอบแบบ "ไม่ซ้ำกันเด็ดขาด"
+  //   เริ่มจากตำแหน่ง hash ของชื่อ → ถ้าสีถูกใช้แล้วให้เลื่อนหาสีว่างถัดไป
+  //   หากผู้รับผิดชอบเกินจำนวนสีในพาเลต จะสร้างสีใหม่แบบกระจายเป็นเกลียวทอง
+  let ownerColorMap = {};
+
+  function hslToHex(h, s, l) {
+    s /= 100; l /= 100;
+    const k = n => (n + h / 30) % 12;
+    const a = s * Math.min(l, 1 - l);
+    const f = n => l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
+    const to = x => Math.round(255 * x).toString(16).padStart(2, '0');
+    return '#' + to(f(0)) + to(f(8)) + to(f(4));
+  }
+
+  function buildOwnerColorMap() {
+    // เก็บชื่อผู้รับผิดชอบตามลำดับที่ปรากฏครั้งแรกในข้อมูล (สีจึงคงที่เมื่อเพิ่มคนใหม่ต่อท้าย)
+    const seen = [];
+    allProjects.forEach(x => {
+      const o = String(x.owner || '').trim();
+      if (o && !seen.includes(o)) seen.push(o);
+    });
+    const used = {};
+    ownerColorMap = {};
+    seen.forEach((name, order) => {
+      let h = 0;
+      for (let i = 0; i < name.length; i++) { h = (h * 31 + name.charCodeAt(i)) >>> 0; }
+      let idx = h % OWNER_PALETTE.length, guard = 0;
+      while (used[idx] && guard < OWNER_PALETTE.length) { idx = (idx + 1) % OWNER_PALETTE.length; guard++; }
+      if (guard < OWNER_PALETTE.length) {
+        used[idx] = true;
+        ownerColorMap[name] = OWNER_PALETTE[idx];
+      } else {
+        ownerColorMap[name] = hslToHex((order * 137) % 360, 68, 52); // สีสร้างใหม่ ไม่ซ้ำเดิม
+      }
+    });
+  }
+
   function ownerColor(name) {
     const s = String(name || '').trim();
-    let h = 0;
-    for (let i = 0; i < s.length; i++) { h = (h * 31 + s.charCodeAt(i)) >>> 0; }
-    return OWNER_PALETTE[h % OWNER_PALETTE.length];
+    return ownerColorMap[s] || '#94a3b8';   // ไม่ระบุผู้รับผิดชอบ = เทา
   }
 
   function statusHex(st) { return STATUS_HEX[String(st || '').trim()] || '#818cf8'; }
@@ -1093,6 +1130,7 @@
     const r = await apiGet('getDashboardData');
     if (r.status !== 'success') { $('status-text').textContent = 'โหลดข้อมูลไม่สำเร็จ'; return; }
     allProjects = r.projects || [];
+    buildOwnerColorMap();   // ★ จัดสีประจำตัวผู้รับผิดชอบแบบไม่ซ้ำกัน
     allFiscalYears = r.fiscalYears || [];
     allUsers = r.users || [];
     const now = new Date(), p = n => String(n).padStart(2, '0');
@@ -1126,23 +1164,46 @@
     const canFY = canManageFiscalYear();
     wrap.innerHTML = years.length ? years.map(y => {
       const plist = allProjects.filter(x => String(x.fiscalYear || '').trim() === y);
-      const approved = plist.reduce((s, x) => s + (Number(x.approvedBudget) || 0), 0);
-      const disb = plist.reduce((s, x) => s + (Number(x.disbursedAmount) || 0), 0);
-      const pct = map[y] ? Math.min(100, Math.round(disb / map[y] * 100)) : 0;
+      const alloc = map[y] || 0;                                                       // งบจัดสรรตามแผนของปี (จากชีต FiscalYears)
+      const planProj = plist.reduce((s, x) => s + (Number(x.budget) || 0), 0);         // ★ งบรวมตามแผนของทุกโครงการ
+      const approved = plist.reduce((s, x) => s + (Number(x.approvedBudget) || 0), 0); // งบอนุมัติรวม
+      const disb = plist.reduce((s, x) => s + (Number(x.disbursedAmount) || 0), 0);    // เบิกจ่ายรวม
+      const remaining = alloc - approved;                                              // ★ ยอดคงเหลือ = จัดสรร − อนุมัติ
+      const usedPct = alloc ? Math.min(100, Math.round(approved / alloc * 100)) : 0;   // % งบที่อนุมัติไปแล้ว
+      const disbPct = alloc ? Math.min(100, Math.round(disb / alloc * 100)) : 0;       // % งบที่เบิกจ่ายไปแล้ว
+
+      // ★ สถานะยอดคงเหลือ: ติดลบ = แดง / ใกล้หมด (≥80%) = อำพัน / หมดพอดี = เทา / เหลือ = เขียว
+      let remIcon = '💰', remCls = 'text-emerald-600 dark:text-emerald-400', remBg = 'bg-emerald-50 dark:bg-emerald-500/10 border-emerald-200 dark:border-emerald-500/30', remNote = 'ยังมีงบเหลือสำหรับอนุมัติโครงการเพิ่ม';
+      if (remaining < 0)      { remIcon = '⚠️'; remCls = 'text-rose-600 dark:text-rose-400';    remBg = 'bg-rose-50 dark:bg-rose-500/10 border-rose-200 dark:border-rose-500/30';    remNote = 'งบที่อนุมัติเกินวงเงินจัดสรรของปี!'; }
+      else if (remaining === 0) { remIcon = '✔️'; remCls = 'text-slate-500 dark:text-slate-400'; remBg = 'bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700'; remNote = 'ใช้งบครบตามวงเงินที่จัดสรรแล้ว'; }
+      else if (alloc > 0 && usedPct >= 80) { remIcon = '🔔'; remCls = 'text-amber-600 dark:text-amber-400'; remBg = 'bg-amber-50 dark:bg-amber-500/10 border-amber-200 dark:border-amber-500/30'; remNote = 'งบใกล้หมด ควรตรวจสอบก่อนอนุมัติเพิ่ม'; }
+
       return `<div class="bg-white dark:bg-[#151e32] border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-sm">
         <div class="flex items-center justify-between gap-2">
           <h3 class="font-bold text-sm sm:text-base text-slate-900 dark:text-white">📅 ปีงบประมาณ ${esc(y)}</h3>
           ${canFY ? `<button onclick="openFiscalYearModal('${esc(y)}')" class="text-[10px] px-2 py-1 rounded-lg bg-amber-50 dark:bg-amber-500/15 text-amber-600 dark:text-amber-300 border border-amber-200 dark:border-amber-500/30 hover:bg-amber-100 transition">✏️ แก้ไข</button>` : ''}
         </div>
         <p class="text-[10px] text-slate-500 dark:text-slate-400 mt-1.5">งบจัดสรรตามแผน</p>
-        <p class="text-lg sm:text-xl font-bold text-indigo-600 dark:text-indigo-400 truncate">${money(map[y])}</p>
+        <p class="text-lg sm:text-xl font-bold text-indigo-600 dark:text-indigo-400 truncate">${money(alloc)}</p>
+
         <div class="mt-2 space-y-1 text-[11px]">
-          <div class="flex justify-between"><span class="text-slate-500 dark:text-slate-400">อนุมัติแล้ว</span><span class="text-emerald-600 dark:text-emerald-400 font-semibold">${money(approved)}</span></div>
-          <div class="flex justify-between"><span class="text-slate-500 dark:text-slate-400">เบิกจ่ายแล้ว</span><span class="text-amber-600 dark:text-amber-400 font-semibold">${money(disb)}</span></div>
-          <div class="flex justify-between"><span class="text-slate-500 dark:text-slate-400">จำนวนโครงการ</span><span class="font-semibold text-slate-700 dark:text-slate-200">${plist.length} โครงการ</span></div>
+          <div class="flex justify-between gap-2"><span class="text-slate-500 dark:text-slate-400">งบตามแผนโครงการ (${plist.length})</span><span class="font-semibold text-indigo-500 dark:text-indigo-300 whitespace-nowrap">${money(planProj)}</span></div>
+          <div class="flex justify-between gap-2"><span class="text-slate-500 dark:text-slate-400">อนุมัติแล้ว</span><span class="text-emerald-600 dark:text-emerald-400 font-semibold whitespace-nowrap">${money(approved)}</span></div>
+          <div class="flex justify-between gap-2"><span class="text-slate-500 dark:text-slate-400">เบิกจ่ายแล้ว</span><span class="text-amber-600 dark:text-amber-400 font-semibold whitespace-nowrap">${money(disb)}</span></div>
         </div>
-        <div class="mt-2.5 h-1.5 rounded-full bg-slate-200 dark:bg-slate-800 overflow-hidden"><div class="h-full bg-gradient-to-r from-amber-500 to-amber-400" style="width:${pct}%"></div></div>
-        <p class="text-[10px] text-slate-400 mt-1">เบิกจ่าย ${pct}% ของแผน</p>
+
+        <!-- ★ ยอดคงเหลือที่ได้รับการจัดสรร (ไฮไลต์) -->
+        <div class="mt-2.5 rounded-xl border px-2.5 py-2 flex items-center justify-between gap-2 ${remBg}" title="งบจัดสรรตามแผน − งบที่อนุมัติ | ${remNote}">
+          <span class="text-[10px] font-medium ${remCls} leading-tight">${remIcon} ยอดคงเหลือ<br>ที่ได้รับจัดสรร</span>
+          <span class="text-sm sm:text-base font-bold ${remCls} whitespace-nowrap">${money(remaining)}</span>
+        </div>
+
+        <!-- ★ แถบความคืบหน้า: เขียว = อนุมัติ / เหลือง = เบิกจ่ายแล้ว / ช่องว่าง = คงเหลือ -->
+        <div class="mt-2.5 h-2 rounded-full bg-slate-200 dark:bg-slate-800 overflow-hidden flex" title="🟢 อนุมัติ ${usedPct}% · 🟡 เบิกจ่าย ${disbPct}% · คงเหลือ ${Math.max(0, 100 - usedPct)}%">
+          <div class="h-full bg-emerald-500 transition-all" style="width:${usedPct}%"></div>
+          <div class="h-full bg-amber-400 transition-all" style="width:${Math.max(0, disbPct)}%"></div>
+        </div>
+        <p class="text-[10px] text-slate-400 mt-1">อนุมัติไปแล้ว ${usedPct}% · เบิกจ่าย ${disbPct}% ของแผน</p>
       </div>`;
     }).join('') : '<p class="text-slate-400 text-xs">ยังไม่มีข้อมูลปีงบประมาณ</p>';
   }
@@ -1202,13 +1263,14 @@
       const oc = ownerColor(p.owner);
       return `<tr class="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
         <td class="p-3">
-          <span class="text-indigo-600 dark:text-indigo-400 font-semibold text-[11px]">${esc(p.code || '-')}</span>
-          <p class="font-medium text-slate-800 dark:text-slate-200 max-w-[220px] truncate" title="${esc(p.title)}">${esc(p.title || '-')}</p>
+          <span class="inline-block rounded-md px-1.5 py-0.5 border-l-[3px] border-indigo-400 dark:border-indigo-500 bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-300 font-semibold text-[11px]">${esc(p.code || '-')}</span>
+          <p class="font-medium text-slate-800 dark:text-slate-200 max-w-[220px] truncate mt-0.5" title="${esc(p.title)}">${esc(p.title || '-')}</p>
         </td>
         <td class="p-3">
-          <div class="flex items-center gap-1.5 max-w-[150px]" title="${esc(p.owner)}">
-            <span class="w-1 h-4 rounded-full flex-shrink-0 shadow-sm" style="background:${oc}"></span>
-            <span class="truncate text-slate-600 dark:text-slate-300">${esc(p.owner || '-')}</span>
+          <div class="max-w-[170px]" title="${esc(p.owner)}">
+            <span class="inline-flex items-center max-w-full rounded-md px-2 py-0.5 border-l-[3px]" style="background:${oc}22;border-left-color:${oc}">
+              <span class="truncate min-w-0 text-slate-700 dark:text-slate-200">${esc(p.owner || '-')}</span>
+            </span>
           </div>
         </td>
         <td class="p-3 text-center whitespace-nowrap">${esc(p.fiscalYear || '-')}</td>
