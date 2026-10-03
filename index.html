@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>ระบบบริหารจัดการโครงการและแดชบอร์ดงบประมาณ</title>
-  
+
   <!-- Tailwind CSS & Chart.js -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -12,14 +12,8 @@
       darkMode: 'class',
       theme: {
         extend: {
-          colors: {
-            brand: '#6366f1'
-          },
-          screens: {
-            'xs': '420px',
-            'ipad': '768px',
-            'ipad-pro': '1024px'
-          }
+          colors: { brand: '#6366f1' },
+          screens: { 'xs': '420px', 'ipad': '768px', 'ipad-pro': '1024px' }
         }
       }
     }
@@ -28,35 +22,25 @@
 
   <!-- SweetAlert2 -->
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  
+
   <!-- Google Font: Prompt -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-  
-  <style>
-    body { 
-      font-family: 'Prompt', sans-serif; 
-      -webkit-tap-highlight-color: transparent; 
-      touch-action: manipulation;
-    }
-    
-    .touch-scroll { -webkit-overflow-scrolling: touch; }
 
-    /* Custom Scrollbar */
+  <style>
+    body { font-family: 'Prompt', sans-serif; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+    .touch-scroll { -webkit-overflow-scrolling: touch; }
     .dark .custom-scrollbar::-webkit-scrollbar { height: 5px; width: 5px; }
     .dark .custom-scrollbar::-webkit-scrollbar-track { background: #0f172a; border-radius: 4px; }
     .dark .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
     .custom-scrollbar::-webkit-scrollbar { height: 5px; width: 5px; }
     .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 4px; }
     .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-
-    /* Modal Animation */
     .modal-backdrop { transition: opacity 0.25s ease-out; }
     .modal-content-box { transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease-out; }
     .modal-hidden .modal-content-box { transform: scale(0.95) translateY(12px); opacity: 0; }
     .modal-show .modal-content-box { transform: scale(1) translateY(0); opacity: 1; }
-
     .swal2-popup { font-family: 'Prompt', sans-serif !important; border-radius: 1.25rem !important; }
     .dark .swal2-popup { background: #151e32 !important; color: #f8fafc !important; border: 1px solid #334155 !important; }
   </style>
@@ -66,8 +50,7 @@
   <!-- ==================== Sticky Header ==================== -->
   <header class="sticky top-0 z-40 w-full bg-slate-50/95 dark:bg-[#0b1120]/95 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800/80 shadow-sm transition-colors duration-300">
     <div class="max-w-7xl mx-auto px-3 sm:px-5 md:px-6 py-2.5 sm:py-3.5 flex flex-col md:flex-row md:items-center justify-between gap-3">
-      
-      <!-- ฝั่งซ้าย: โลโก้ และชื่อหน่วยงาน -->
+
       <div class="flex items-center gap-3 sm:gap-4">
         <div id="appLogoContainer" class="w-11 h-11 sm:w-14 sm:h-14 ipad:w-16 ipad:h-16 rounded-2xl bg-indigo-500/10 border border-indigo-500/30 flex items-center justify-center overflow-hidden flex-shrink-0 shadow-inner">
           <img id="appLogoImg" src="" alt="Logo" class="w-full h-full object-cover hidden">
@@ -82,7 +65,6 @@
               ภาควิชาเทคโนโลยีและสื่อสารการศึกษา
             </h1>
           </div>
-
           <div class="flex flex-wrap items-center gap-1.5 sm:gap-2 mt-0.5">
             <span id="uiSystemName" class="px-2 py-0.5 rounded-md text-[10px] sm:text-xs font-semibold bg-slate-200/90 text-slate-700 dark:bg-slate-800 dark:text-slate-300 border border-slate-300/60 dark:border-slate-700/60 truncate">
               ระบบติดตามงบประมาณภาพรวมและงบประมาณ
@@ -95,7 +77,6 @@
         </div>
       </div>
 
-      <!-- ฝั่งขวา: สลับโหมด, สถานะ, ปุ่มเข้าสู่ระบบ, รีเฟรช -->
       <div class="flex items-center justify-between md:justify-end gap-2 flex-wrap">
         <button onclick="toggleTheme()" id="themeToggleBtn" class="bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-slate-700 text-xs px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl transition shadow-sm font-medium flex items-center gap-1 active:scale-95" title="สลับโหมดมืด/สว่าง">
           <span id="themeIcon">🌙</span>
@@ -125,13 +106,13 @@
 
   <!-- ==================== Main Content Container ==================== -->
   <main class="max-w-7xl w-full mx-auto p-3 sm:p-5 md:p-6 space-y-5 sm:space-y-7 flex-1">
-    
+
     <!-- แถบควบคุมสถานะผู้ล็อกอินตามสิทธิ์ -->
     <div id="adminControlBar" class="hidden bg-indigo-50/90 dark:bg-indigo-950/40 backdrop-blur-md border border-indigo-200 dark:border-indigo-500/30 rounded-2xl p-3 sm:p-3.5 flex flex-wrap items-center justify-between gap-2.5 shadow-md">
       <div class="flex items-center gap-2">
         <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
         <div class="text-xs text-indigo-900 dark:text-indigo-200">
-          ผู้ใช้งาน: <strong id="adminUserNameDisplay" class="text-indigo-950 dark:text-white font-semibold">Admin</strong> 
+          ผู้ใช้งาน: <strong id="adminUserNameDisplay" class="text-indigo-950 dark:text-white font-semibold">Admin</strong>
           <span id="adminRoleBadge" class="ml-1.5 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-indigo-100 text-indigo-700 dark:bg-indigo-500/20 dark:text-indigo-300 border border-indigo-300 dark:border-indigo-500/30 shadow-sm">-</span>
         </div>
       </div>
@@ -313,7 +294,7 @@
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200 dark:border-slate-800 pb-2.5">
         <div>
           <h3 class="text-sm sm:text-base font-semibold text-slate-800 dark:text-slate-200">สัดส่วนจำนวนโครงการจำแนกตามผู้รับผิดชอบ (Project Owners)</h3>
-          <p class="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400">เปรียบเทียบภาระงานและร้อยละ (%) แสดงชื่อและหน่วยแกนชัดเจน</p>
+          <p class="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400">แต่ละแท่งใช้สีประจำตัวผู้รับผิดชอบ — สีเดียวกับแถบสีในตารางข้อมูลโครงการ</p>
         </div>
         <span id="owner-total-badge" class="text-[11px] sm:text-xs text-indigo-600 dark:text-indigo-400 font-semibold bg-indigo-50 dark:bg-indigo-500/10 px-2.5 py-0.5 rounded-full border border-indigo-200 dark:border-indigo-500/20 self-start sm:self-auto">0 ผู้รับผิดชอบ</span>
       </div>
@@ -329,7 +310,7 @@
             <span>สรุปภาระงานรายบุคคล</span>
             <span class="text-[10px] text-slate-400 font-normal">ร้อยละ (%)</span>
           </h4>
-          <div id="owner-summary-list" class="space-y-1.5 text-xs max-h-56 sm:max-h-64 ipad:max-h-72 overflow-y-auto touch-scroll custom-scrollbar pr-1"></div>
+          <div id="owner-summary-list" class="space-y-2 text-xs max-h-56 sm:max-h-64 ipad:max-h-72 overflow-y-auto touch-scroll custom-scrollbar pr-1"></div>
         </div>
       </div>
     </div>
@@ -372,24 +353,14 @@
 
   </main>
 
-  <!-- ==================== ส่วนท้ายระบบ (Footer & ปุ่มการติดตามโครงการ) ==================== -->
+  <!-- ==================== Footer ==================== -->
   <footer class="w-full mt-12 bg-white/80 dark:bg-[#0f172a]/80 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 transition-colors duration-300">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8 flex flex-col md:flex-row items-center justify-between gap-4">
-      
-      <!-- ข้อมูลหน่วยงานและลิขสิทธิ์ -->
       <div class="text-center md:text-left space-y-1">
-        <p class="text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-200">
-          ระบบบริหารจัดการโครงการและแดชบอร์ดงบประมาณ
-        </p>
-        <p class="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400">
-          ภาควิชาเทคโนโลยีและสื่อสารการศึกษา คณะศึกษาศาสตร์ มหาวิทยาลัยมหาสารคาม
-        </p>
-        <p class="text-[10px] text-slate-400 dark:text-slate-500">
-          © 2026 Department of Educational Technology and Communications. All rights reserved.
-        </p>
+        <p class="text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-200">ระบบบริหารจัดการโครงการและแดชบอร์ดงบประมาณ</p>
+        <p class="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400">ภาควิชาเทคโนโลยีและสื่อสารการศึกษา คณะศึกษาศาสตร์ มหาวิทยาลัยมหาสารคาม</p>
+        <p class="text-[10px] text-slate-400 dark:text-slate-500">© 2026 Department of Educational Technology and Communications. All rights reserved.</p>
       </div>
-
-      <!-- ปุ่มคลิกไปหน้า "การติดตามโครงการ" (link ไป tracking.html) -->
       <div class="flex items-center gap-3">
         <a href="tracking.html" class="inline-flex items-center gap-2 px-4 sm:px-5 py-2.5 rounded-xl bg-gradient-to-r from-rose-600 via-indigo-600 to-purple-600 hover:from-rose-500 hover:to-purple-500 text-white font-medium text-xs sm:text-sm shadow-md shadow-indigo-600/25 transition-all active:scale-95 group">
           <span class="text-base group-hover:rotate-12 transition-transform">⏱️</span>
@@ -399,14 +370,13 @@
           </svg>
         </a>
       </div>
-
     </div>
   </footer>
 
   <!-- ==================== Modal 1: ดูรายละเอียดโครงการ ==================== -->
   <div id="viewProjectModal" class="fixed inset-0 bg-slate-900/60 dark:bg-black/80 backdrop-blur-md hidden items-center justify-center p-3 sm:p-5 z-50 modal-backdrop modal-hidden">
     <div class="bg-white/95 dark:bg-[#151e32]/95 backdrop-blur-xl border border-slate-200 dark:border-slate-700 rounded-3xl p-4 sm:p-6 ipad:p-7 max-w-3xl w-full space-y-4 shadow-2xl max-h-[92vh] overflow-y-auto touch-scroll custom-scrollbar modal-content-box">
-      
+
       <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
         <div class="flex items-center gap-2">
           <span class="w-2.5 h-2.5 rounded-full bg-indigo-500 animate-pulse"></span>
@@ -464,7 +434,7 @@
               <span id="vp_endDate" class="text-slate-800 dark:text-slate-200 font-medium">-</span>
             </div>
           </div>
-          
+
           <div class="sm:col-span-2 bg-white dark:bg-[#111928] p-3 rounded-2xl border border-slate-200 dark:border-slate-800 grid grid-cols-3 gap-1.5 sm:gap-2 text-center shadow-sm">
             <div>
               <span class="text-slate-500 dark:text-slate-400 text-[10px] sm:text-[11px] block truncate">งบตามแผน</span>
@@ -491,9 +461,7 @@
       </div>
 
       <div class="space-y-2">
-        <h4 class="text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
-          📁 คลังไฟล์เอกสารตัวอย่าง (Project Files)
-        </h4>
+        <h4 class="text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-200 flex items-center gap-1.5">📁 คลังไฟล์เอกสารตัวอย่าง (Project Files)</h4>
         <div class="bg-slate-50 dark:bg-[#0b1120] rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden">
           <div id="viewProjectFilesList" class="divide-y divide-slate-200 dark:divide-slate-800 text-xs">
             <div class="p-4 text-center text-slate-400 text-xs">กำลังค้นหาไฟล์ตัวอย่าง...</div>
@@ -503,9 +471,7 @@
 
       <div class="flex justify-end pt-3 border-t border-slate-200 dark:border-slate-800">
         <button type="button" onclick="closeViewProjectModal()" class="w-full sm:w-auto px-6 py-2.5 sm:px-7 sm:py-3 bg-rose-600 hover:bg-rose-500 active:bg-rose-700 text-white rounded-xl sm:rounded-2xl text-xs sm:text-sm font-semibold transition shadow-lg shadow-rose-600/25 flex items-center justify-center gap-2 active:scale-95">
-          <svg class="w-4 h-4 sm:w-4.5 sm:h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
-          </svg>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
           <span>ปิดหน้าต่าง</span>
         </button>
       </div>
@@ -516,12 +482,10 @@
   <!-- ==================== Modal: แสดงวันเวลาดำเนินการโครงการ ==================== -->
   <div id="timeModal" class="fixed inset-0 bg-slate-900/60 dark:bg-black/80 backdrop-blur-md hidden items-center justify-center p-4 z-50 modal-backdrop modal-hidden">
     <div class="bg-white/95 dark:bg-[#151e32]/95 backdrop-blur-xl border border-slate-200 dark:border-slate-700 rounded-3xl p-5 sm:p-6 max-w-sm w-full space-y-3.5 shadow-2xl modal-content-box">
-      
+
       <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-2.5">
         <div class="flex items-center gap-2">
-          <div class="w-8 h-8 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-base">
-            ⏱️
-          </div>
+          <div class="w-8 h-8 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-base">⏱️</div>
           <h3 class="text-sm sm:text-base font-bold text-slate-900 dark:text-white">กำหนดการดำเนินโครงการ</h3>
         </div>
         <button onclick="closeTimeModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-white text-xl font-bold">&times;</button>
@@ -560,9 +524,7 @@
       </div>
 
       <div class="flex justify-end pt-2 border-t border-slate-200 dark:border-slate-800">
-        <button type="button" onclick="closeTimeModal()" class="w-full px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-white rounded-xl text-xs font-semibold transition active:scale-95">
-          ปิดหน้าต่าง
-        </button>
+        <button type="button" onclick="closeTimeModal()" class="w-full px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-white rounded-xl text-xs font-semibold transition active:scale-95">ปิดหน้าต่าง</button>
       </div>
 
     </div>
@@ -588,9 +550,7 @@
           <label class="block text-slate-600 dark:text-slate-400 mb-1 font-medium">รหัสผ่าน (Password)</label>
           <div class="relative">
             <input type="password" id="adminInputPass" placeholder="••••••••" class="w-full bg-slate-50 dark:bg-[#0b1120] border border-slate-300 dark:border-slate-700 rounded-xl p-2.5 sm:p-3 pr-10 text-slate-800 dark:text-white outline-none focus:border-indigo-500">
-            <button type="button" onclick="togglePasswordVisibility('adminInputPass')" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
-              👁️
-            </button>
+            <button type="button" onclick="togglePasswordVisibility('adminInputPass')" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">👁️</button>
           </div>
         </div>
         <p id="loginError" class="text-rose-500 text-xs text-center hidden"></p>
@@ -607,9 +567,7 @@
   <div id="fiscalYearModal" class="fixed inset-0 bg-slate-900/60 dark:bg-black/80 backdrop-blur-md hidden items-center justify-center p-4 z-50 modal-backdrop modal-hidden">
     <div class="bg-white/95 dark:bg-[#151e32]/95 backdrop-blur-xl border border-slate-200 dark:border-slate-700 rounded-3xl p-5 sm:p-6 max-w-sm w-full space-y-3.5 shadow-2xl modal-content-box">
       <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-2.5">
-        <h3 class="text-sm sm:text-base font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
-          <span>➕</span> เพิ่ม/แก้ไขปีงบประมาณ
-        </h3>
+        <h3 class="text-sm sm:text-base font-bold text-slate-900 dark:text-white flex items-center gap-1.5"><span>➕</span> เพิ่ม/แก้ไขปีงบประมาณ</h3>
         <button onclick="closeFiscalYearModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-white text-lg">&times;</button>
       </div>
 
@@ -634,7 +592,7 @@
   <!-- ==================== Modal 2: เพิ่ม/แก้ไขโครงการ ==================== -->
   <div id="projectModal" class="fixed inset-0 bg-slate-900/60 dark:bg-black/80 backdrop-blur-md hidden items-center justify-center p-3 sm:p-5 z-50 modal-backdrop modal-hidden">
     <div class="bg-white/95 dark:bg-[#151e32]/95 backdrop-blur-xl border border-slate-200 dark:border-slate-700 rounded-3xl p-4 sm:p-6 max-w-3xl w-full space-y-4 shadow-2xl max-h-[92vh] overflow-y-auto touch-scroll custom-scrollbar modal-content-box">
-      
+
       <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-2.5">
         <div>
           <h3 id="projectModalTitle" class="text-sm sm:text-base ipad:text-lg font-bold text-slate-900 dark:text-white">จัดการข้อมูลโครงการ</h3>
@@ -675,9 +633,10 @@
 
         <div class="sm:col-span-2">
           <label class="block text-indigo-600 dark:text-indigo-300 font-semibold mb-1">🎯 วัตถุประสงค์ของโครงการ</label>
-          <textarea id="p_objective" rows="2.5" placeholder="ระบุวัตถุประสงค์ของโครงการ..." class="w-full bg-slate-50 dark:bg-[#0b1120] border border-slate-300 dark:border-slate-700 rounded-xl p-2.5 text-slate-800 dark:text-white outline-none focus:border-indigo-500 custom-scrollbar"></textarea>
+          <textarea id="p_objective" rows="3" placeholder="ระบุวัตถุประสงค์ของโครงการ..." class="w-full bg-slate-50 dark:bg-[#0b1120] border border-slate-300 dark:border-slate-700 rounded-xl p-2.5 text-slate-800 dark:text-white outline-none focus:border-indigo-500 custom-scrollbar"></textarea>
         </div>
-        <!-- 🌱 SDG: เปลี่ยนเป็นช่องกรอกข้อความอิสระ -->
+
+        <!-- ★ SDG เปลี่ยนเป็นช่องกรอกข้อความอิสระ -->
         <div class="sm:col-span-2">
           <label class="block text-emerald-600 dark:text-emerald-400 font-semibold mb-1">🌱 ความสอดคล้องเป้าหมาย SDG</label>
           <input type="text" id="p_sdg" placeholder="พิมพ์ได้อิสระ เช่น SDG 4: สร้างหลักประกันการศึกษาที่มีคุณภาพ เท่าเทียม และครอบคลุม หรือ SO 1 พลิกโฉมการศึกษา..." class="w-full bg-slate-50 dark:bg-[#0b1120] border border-slate-300 dark:border-slate-700 rounded-xl p-2.5 text-slate-800 dark:text-white outline-none focus:border-emerald-500">
@@ -718,7 +677,7 @@
           <input type="url" id="p_driveLink" placeholder="https://drive.google.com/..." class="w-full bg-slate-50 dark:bg-[#0b1120] border border-slate-300 dark:border-slate-700 rounded-xl p-2.5 text-slate-800 dark:text-white outline-none focus:border-indigo-500">
         </div>
 
-        <!-- ★★★ ช่องหมายเหตุ (เพิ่มใหม่ — บันทึกลงคอลัมน์ Notes) ★★★ -->
+        <!-- ★ ช่องหมายเหตุ (Notes) — ฟิลด์สุดท้ายของฟอร์ม -->
         <div class="sm:col-span-2">
           <label class="block text-slate-600 dark:text-slate-400 mb-1 font-medium">📝 หมายเหตุ (Notes)</label>
           <textarea id="p_notes" rows="2" placeholder="ระบุหมายเหตุเพิ่มเติมของโครงการ เช่น เหตุผลการปรับลดงบประมาณ หมายเหตุการเบิกจ่าย ฯลฯ" class="w-full bg-slate-50 dark:bg-[#0b1120] border border-slate-300 dark:border-slate-700 rounded-xl p-2.5 text-slate-800 dark:text-white outline-none focus:border-indigo-500 custom-scrollbar"></textarea>
@@ -732,7 +691,6 @@
         </div>
       </div>
 
-      <!-- ปุ่มบันทึก/ยกเลิก -->
       <div class="flex justify-end gap-2 pt-3 border-t border-slate-200 dark:border-slate-800">
         <button type="button" onclick="closeProjectModal()" class="px-4 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-semibold transition active:scale-95">ยกเลิก</button>
         <button type="button" onclick="saveProjectSubmit()" id="btnSaveProject" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold transition shadow-md active:scale-95">💾 บันทึกโครงการ</button>
@@ -806,7 +764,7 @@
             <label class="flex items-center gap-2 bg-white dark:bg-[#0b1120] border border-slate-300 dark:border-slate-700 rounded-xl px-2.5 py-2 cursor-pointer"><input type="checkbox" id="u_canEdit" class="accent-indigo-600 w-3.5 h-3.5"> แก้ไขโครงการได้</label>
             <label class="flex items-center gap-2 bg-white dark:bg-[#0b1120] border border-slate-300 dark:border-slate-700 rounded-xl px-2.5 py-2 cursor-pointer"><input type="checkbox" id="u_canDelete" class="accent-indigo-600 w-3.5 h-3.5"> ลบโครงการได้</label>
             <label class="flex items-center gap-2 bg-white dark:bg-[#0b1120] border border-slate-300 dark:border-slate-700 rounded-xl px-2.5 py-2 cursor-pointer"><input type="checkbox" id="u_canManageUsers" class="accent-indigo-600 w-3.5 h-3.5"> จัดการสมาชิกได้</label>
-            <!-- ★★★ ตัวเลือกใหม่: จัดการเฉพาะโครงการของตนเอง ★★★ -->
+            <!-- ★ ตัวเลือก: จัดการเฉพาะโครงการของตนเอง -->
             <label class="flex items-center gap-2 bg-amber-50 dark:bg-amber-500/10 border border-amber-300 dark:border-amber-500/30 rounded-xl px-2.5 py-2 cursor-pointer col-span-2 sm:col-span-1">
               <input type="checkbox" id="u_ownOnly" class="accent-amber-600 w-3.5 h-3.5">
               <span class="text-amber-800 dark:text-amber-300 font-medium">🔒 เฉพาะโครงการของตนเอง</span>
@@ -954,6 +912,36 @@
   }
   function canManageFiscalYear() { return !!(currentUser && (currentUser.canDelete || currentUser.canManageUsers)); }
 
+  // ==================== สีและ Badge ====================
+  // ★ สีหลักของสถานะโครงการ — ใช้ร่วมกันทั้ง Badge ตาราง, Doughnut Chart และ Modal ดูรายละเอียด
+  const STATUS_HEX = {
+    'เสนอโครงการ': '#0ea5e9',
+    'อยู่ระหว่างดำเนินงาน': '#f59e0b',
+    'เบิกจ่ายเรียบร้อย': '#10b981',
+    'ยกเลิกโครงการ': '#94a3b8'
+  };
+  const CAT_COLORS = ['#6366f1','#8b5cf6','#ec4899','#f59e0b','#10b981','#0ea5e9','#f43f5e','#14b8a6','#a855f7','#64748b'];
+
+  // ★ ชุดสีประจำผู้รับผิดชอบ (16 สี แยกชัด อ่านง่ายทั้งโหมดสว่าง/มืด)
+  const OWNER_PALETTE = ['#6366f1','#f59e0b','#10b981','#ec4899','#0ea5e9','#a855f7','#f43f5e','#14b8a6','#eab308','#8b5cf6','#3b82f6','#22c55e','#fb923c','#06b6d4','#d946ef','#84cc16'];
+
+  // ★ กำหนดสีประจำบุคคลจากการ hash ชื่อ — สีคงที่เสมอ ไม่เปลี่ยนตามการกรอง/เรียงลำดับ
+  function ownerColor(name) {
+    const s = String(name || '').trim();
+    let h = 0;
+    for (let i = 0; i < s.length; i++) { h = (h * 31 + s.charCodeAt(i)) >>> 0; }
+    return OWNER_PALETTE[h % OWNER_PALETTE.length];
+  }
+
+  function statusHex(st) { return STATUS_HEX[String(st || '').trim()] || '#818cf8'; }
+
+  // ★ Badge สถานะ: จุดสีนำหน้า + พื้นโปร่งจากสีหลัก
+  function statusBadge(st) {
+    const hex = statusHex(st);
+    return `<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-semibold whitespace-nowrap" style="background:${hex}22;color:${hex}">
+      <span class="w-1.5 h-1.5 rounded-full flex-shrink-0" style="background:${hex}"></span>${esc(st || '-')}</span>`;
+  }
+
   // ==================== Init ====================
   document.addEventListener('DOMContentLoaded', async () => {
     const t = localStorage.getItem('etc_theme');
@@ -1033,7 +1021,6 @@
     if (currentUser) {
       bar.classList.remove('hidden');
       if (authSec) authSec.classList.add('hidden');
-      setText('adminUserNameDisplay', currentUser.name || currentUser.username);
       $('adminUserNameDisplay').textContent = currentUser.name || currentUser.username;
       $('adminRoleBadge').textContent = currentUser.role || '-';
       toggleBtn('btnBarNewProject', !!currentUser.canCreate);
@@ -1206,38 +1193,30 @@
   }
 
   // ==================== ตารางโครงการ ====================
-  const STATUS_META = {
-    'เสนอโครงการ': { bg: 'bg-sky-100 dark:bg-sky-500/15', tx: 'text-sky-700 dark:text-sky-300' },
-    'อยู่ระหว่างดำเนินงาน': { bg: 'bg-amber-100 dark:bg-amber-500/15', tx: 'text-amber-700 dark:text-amber-300' },
-    'เบิกจ่ายเรียบร้อย': { bg: 'bg-emerald-100 dark:bg-emerald-500/15', tx: 'text-emerald-700 dark:text-emerald-300' },
-    'ยกเลิกโครงการ': { bg: 'bg-slate-200 dark:bg-slate-700/50', tx: 'text-slate-600 dark:text-slate-300' }
-  };
-  const STATUS_COLORS = { 'เสนอโครงการ': '#0ea5e9', 'อยู่ระหว่างดำเนินงาน': '#f59e0b', 'เบิกจ่ายเรียบร้อย': '#10b981', 'ยกเลิกโครงการ': '#94a3b8' };
-  const CAT_COLORS = ['#6366f1','#8b5cf6','#ec4899','#f59e0b','#10b981','#0ea5e9','#f43f5e','#14b8a6','#a855f7','#64748b'];
-
-  function statusBadge(st) {
-    const m = STATUS_META[String(st).trim()] || { bg: 'bg-slate-100 dark:bg-slate-800', tx: 'text-slate-600 dark:text-slate-300' };
-    return `<span class="px-2 py-0.5 rounded-full text-[10px] font-semibold whitespace-nowrap ${m.bg} ${m.tx}">${esc(st)}</span>`;
-  }
-
   function renderProjectsTable(list) {
     const arr = list || currentFiltered();
     const tb = $('projectsTableBody');
     if (!arr.length) { tb.innerHTML = '<tr><td colspan="9" class="p-6 text-center text-slate-400">ไม่พบข้อมูลโครงการตามเงื่อนไขที่เลือก</td></tr>'; return; }
     tb.innerHTML = arr.map(p => {
       const idx = allProjects.indexOf(p);
+      const oc = ownerColor(p.owner);
       return `<tr class="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
         <td class="p-3">
           <span class="text-indigo-600 dark:text-indigo-400 font-semibold text-[11px]">${esc(p.code || '-')}</span>
           <p class="font-medium text-slate-800 dark:text-slate-200 max-w-[220px] truncate" title="${esc(p.title)}">${esc(p.title || '-')}</p>
         </td>
-        <td class="p-3 max-w-[140px] truncate" title="${esc(p.owner)}">${esc(p.owner || '-')}</td>
+        <td class="p-3">
+          <div class="flex items-center gap-1.5 max-w-[150px]" title="${esc(p.owner)}">
+            <span class="w-1 h-4 rounded-full flex-shrink-0 shadow-sm" style="background:${oc}"></span>
+            <span class="truncate text-slate-600 dark:text-slate-300">${esc(p.owner || '-')}</span>
+          </div>
+        </td>
         <td class="p-3 text-center whitespace-nowrap">${esc(p.fiscalYear || '-')}</td>
         <td class="p-3 text-center"><button onclick="openTimeModalByIdx(${idx})" class="px-2 py-1 rounded-lg bg-indigo-50 dark:bg-indigo-500/15 text-indigo-600 dark:text-indigo-300 text-[10px] font-medium hover:bg-indigo-100 transition whitespace-nowrap">⏱ ดูกำหนดการ</button></td>
         <td class="p-3 text-right font-semibold text-indigo-600 dark:text-indigo-400 whitespace-nowrap">${money(p.budget)}</td>
         <td class="p-3 text-right text-emerald-600 dark:text-emerald-400 whitespace-nowrap">${money(p.approvedBudget)}</td>
         <td class="p-3 text-right text-amber-600 dark:text-amber-400 whitespace-nowrap">${money(p.disbursedAmount)}</td>
-        <td class="p-3 text-center">${statusBadge(p.status || '-')}</td>
+        <td class="p-3 text-center">${statusBadge(p.status)}</td>
         <td class="p-3">
           <div class="flex items-center justify-end gap-1">
             <button onclick="openViewProjectByIdx(${idx})" title="ดูรายละเอียด" class="w-7 h-7 rounded-lg bg-indigo-50 dark:bg-indigo-500/15 text-indigo-600 dark:text-indigo-300 hover:bg-indigo-100 dark:hover:bg-indigo-500/25 transition text-xs">👁</button>
@@ -1275,7 +1254,15 @@
         responsive: true, maintainAspectRatio: false,
         plugins: {
           legend: { labels: { color: t.tick, font: { size: 11 } } },
-          tooltip: { callbacks: { label: c => c.dataset.label + ': ' + money(c.parsed.y) } }
+          tooltip: {
+            callbacks: {
+              label: c => {
+                const plan = c.chart.data.datasets[0].data[c.dataIndex] || 0;
+                const extra = (plan > 0 && c.datasetIndex > 0) ? ` (${Math.round(c.parsed.y / plan * 100)}% ของแผน)` : '';
+                return `${c.dataset.label}: ${money(c.parsed.y)}${extra}`;
+              }
+            }
+          }
         },
         scales: {
           x: { ticks: { color: t.tick }, grid: { display: false } },
@@ -1310,13 +1297,23 @@
     if (chartStatus) chartStatus.destroy();
     chartStatus = new Chart($('statusDoughnutChart'), {
       type: 'doughnut',
-      data: { labels: keys, datasets: [{ data: keys.map(k => counts[k]), backgroundColor: keys.map(k => STATUS_COLORS[k] || '#818cf8'), borderWidth: 0 }] },
-      options: { responsive: true, maintainAspectRatio: false, cutout: '62%', plugins: { legend: { position: 'bottom', labels: { color: chartTheme().tick, boxWidth: 12, font: { size: 10 } } } } }
+      data: {
+        labels: keys,
+        datasets: [{ data: keys.map(k => counts[k]), backgroundColor: keys.map(k => statusHex(k)), borderWidth: 0 }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false, cutout: '62%',
+        plugins: {
+          legend: { position: 'bottom', labels: { color: chartTheme().tick, usePointStyle: true, pointStyle: 'circle', boxWidth: 8, font: { size: 10 } } },
+          tooltip: { callbacks: { label: c => ` ${c.label}: ${c.parsed} โครงการ (${total ? Math.round(c.parsed / total * 100) : 0}%)` } }
+        }
+      }
     });
     $('status-percentage-list').innerHTML = keys.map(k => {
       const pct = total ? Math.round(counts[k] / total * 100) : 0;
+      const hex = statusHex(k);
       return `<div class="flex items-center justify-between gap-2">
-        <span class="flex items-center gap-1.5 min-w-0"><span class="w-2 h-2 rounded-full flex-shrink-0" style="background:${STATUS_COLORS[k] || '#818cf8'}"></span><span class="truncate">${esc(k)}</span></span>
+        <span class="flex items-center gap-1.5 min-w-0"><span class="w-2 h-2 rounded-full flex-shrink-0" style="background:${hex}"></span><span class="truncate">${esc(k)}</span></span>
         <span class="font-semibold whitespace-nowrap">${counts[k]} (${pct}%)</span></div>`;
     }).join('') || '<p class="text-slate-400 text-center py-2">ไม่มีข้อมูล</p>';
   }
@@ -1327,24 +1324,53 @@
     const keys = Object.keys(counts).sort((a, b) => counts[b] - counts[a]);
     const total = list.length;
     $('owner-total-badge').textContent = keys.length + ' ผู้รับผิดชอบ';
+
     if (chartOwner) chartOwner.destroy();
     chartOwner = new Chart($('ownerBarChart'), {
       type: 'bar',
-      data: { labels: keys.map(k => k.length > 24 ? k.slice(0, 24) + '…' : k), datasets: [{ data: keys.map(k => counts[k]), backgroundColor: '#6366f1', borderRadius: 6 }] },
+      data: {
+        labels: keys.map(k => k.length > 24 ? k.slice(0, 24) + '…' : k),
+        datasets: [{
+          data: keys.map(k => counts[k]),
+          backgroundColor: keys.map(k => ownerColor(k) + 'cc'),
+          hoverBackgroundColor: keys.map(k => ownerColor(k)),
+          borderRadius: 6,
+          borderSkipped: false,
+          maxBarThickness: 34
+        }]
+      },
       options: {
         indexAxis: 'y', responsive: true, maintainAspectRatio: false,
-        plugins: { legend: { display: false } },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: c => `${c.label}: ${c.parsed.x} โครงการ (${total ? Math.round(c.parsed.x / total * 100) : 0}%)`
+            }
+          }
+        },
         scales: {
           x: { ticks: { color: chartTheme().tick, precision: 0 }, grid: { color: chartTheme().grid } },
           y: { ticks: { color: chartTheme().tick, font: { size: 10 } }, grid: { display: false } }
         }
       }
     });
+
     $('owner-summary-list').innerHTML = keys.map(k => {
       const pct = total ? Math.round(counts[k] / total * 100) : 0;
-      return `<div class="flex items-center justify-between gap-2">
-        <span class="truncate" title="${esc(k)}">${esc(k)}</span>
-        <span class="font-semibold whitespace-nowrap">${counts[k]} โครงการ <span class="text-indigo-500">(${pct}%)</span></span></div>`;
+      const col = ownerColor(k);
+      return `<div>
+        <div class="flex items-center justify-between gap-2">
+          <span class="flex items-center gap-1.5 min-w-0">
+            <span class="w-2 h-2 rounded-full flex-shrink-0" style="background:${col}"></span>
+            <span class="truncate" title="${esc(k)}">${esc(k)}</span>
+          </span>
+          <span class="font-semibold whitespace-nowrap">${counts[k]} <span style="color:${col}">(${pct}%)</span></span>
+        </div>
+        <div class="h-1 rounded-full bg-slate-200/70 dark:bg-slate-800 overflow-hidden mt-1 ml-3.5">
+          <div class="h-full rounded-full transition-all" style="width:${pct}%;background:${col}"></div>
+        </div>
+      </div>`;
     }).join('') || '<p class="text-slate-400 text-center py-2">ไม่มีข้อมูล</p>';
   }
 
@@ -1373,7 +1399,7 @@
     setVal('p_endDate', project ? toLocalInput(project.endDate) : '');
     setVal('p_status', project ? (project.status || 'เสนอโครงการ') : 'เสนอโครงการ');
     setVal('p_driveLink', project ? project.driveLink : '');
-    setVal('p_notes', project ? project.notes : '');   // ★ หมายเหตุ
+    setVal('p_notes', project ? project.notes : '');
     const fi = $('p_fileInput'); if (fi) fi.value = '';
 
     // ★ ล็อกช่องผู้รับผิดชอบ สำหรับผู้ใช้ที่ตั้งค่า ownOnly
@@ -1416,7 +1442,7 @@
       driveLink: val('p_driveLink'),
       disbursedAmount: Number(val('p_disbursedAmount')) || 0,
       status: val('p_status') || 'เสนอโครงการ',
-      notes: val('p_notes')   // ★ หมายเหตุ
+      notes: val('p_notes')
     };
 
     const btn = $('btnSaveProject'); btn.disabled = true; btn.textContent = 'กำลังบันทึก...';
@@ -1468,7 +1494,6 @@
 
   // ==================== Modal ดูรายละเอียด ====================
   function injectNotesBlock() {
-    // เพิ่มบล็อกแสดง "หมายเหตุ" ใน Modal ดูรายละเอียด (ไม่ต้องแก้ HTML ส่วนต้นของไฟล์)
     const anchor = $('vp_driveLinkContainer');
     if (!anchor || $('vp_notesContainer')) return;
     const div = document.createElement('div');
@@ -1497,13 +1522,15 @@
     $('vp_approvedBudget').textContent = money(p.approvedBudget);
     $('vp_disbursedAmount').textContent = money(p.disbursedAmount);
     const sb = $('vp_status_badge');
-    const m = STATUS_META[String(p.status || '').trim()] || { bg: 'bg-slate-100 dark:bg-slate-800', tx: 'text-slate-600 dark:text-slate-300' };
-    sb.className = 'px-2.5 py-0.5 rounded-full text-[11px] font-semibold ' + m.bg + ' ' + m.tx;
-    sb.textContent = p.status || '-';
+    const hex = statusHex(p.status);
+    sb.className = 'inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold whitespace-nowrap';
+    sb.style.background = hex + '22';
+    sb.style.color = hex;
+    sb.innerHTML = `<span class="w-1.5 h-1.5 rounded-full inline-block" style="background:${hex}"></span>${esc(p.status || '-')}`;
     const dc = $('vp_driveLinkContainer');
     if (p.driveLink && String(p.driveLink).startsWith('http')) { dc.classList.remove('hidden'); $('vp_driveLink').href = p.driveLink; }
     else dc.classList.add('hidden');
-    const nc = $('vp_notesContainer');   // ★ หมายเหตุ
+    const nc = $('vp_notesContainer');
     if (p.notes && String(p.notes).trim()) { nc.classList.remove('hidden'); $('vp_notes').textContent = p.notes; }
     else nc.classList.add('hidden');
     $('viewProjectFilesList').innerHTML = '<div class="p-4 text-center text-slate-400 text-xs">กำลังค้นหาไฟล์ตัวอย่าง...</div>';
@@ -1658,7 +1685,7 @@
       canEdit: $('u_canEdit').checked,
       canDelete: $('u_canDelete').checked,
       canManageUsers: $('u_canManageUsers').checked,
-      ownOnly: $('u_ownOnly').checked,   // ★ จัดการเฉพาะโครงการของตนเอง
+      ownOnly: $('u_ownOnly').checked,
       status: $('u_status').value
     };
     const r = await apiPost({ action: 'saveUserPermissions', userData: userData });
